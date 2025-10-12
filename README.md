@@ -3,7 +3,18 @@
 # ITCS### Course Page
 
 ## The names and student IDs of all team members.
+saad isa 202104139 <br>
+abdulrhman mohamed 202104739 <br>
+rashed kadhem 202100408 <br>
+milad rafat 202102790 <br>
 
 ## A table indicating which student was responsible for which task.
+
+| **Student Name**      | **Student ID** | **Task Description**      |
+|-----------------------|:--------------:|--------------------------|
+| Saad Isa              | 202104139      | TASK 1                   |
+| Abdulrhman Mohamed    | 202104739      | TASK 2                   |
+| Rashed Kadhem         | 202100408      | TASK 3                   |
+| Milad Rafat           | 202102790      | TASK 4                   |
 
 ## A link to your live, hosted application on Replit.
