@@ -160,9 +160,9 @@ function handleTableClick(event) {
     renderTable();
   }
 }
-
-if (event.target.classList.contains('delete-btn')) {
-  const idToDelete = event.target.getAttribute('data-id');
+}
+if (Event.target.classList.contains('delete-btn')) {
+  const idToDelete = Event.target.getAttribute('data-id');
   console.log('Delete button clicked for ID:', idToDelete);
   alert('Delete functionality not implemented yet. ID: ' + idToDelete);
   /**
@@ -229,4 +229,4 @@ document.addEventListener('DOMContentLoaded',function(){
 loadAndInitialize();  
 });
   }
-};
+
