@@ -21,7 +21,8 @@ const assignmentForm = document.querySelector('#assignment-form');
 
 // TODO: Select the assignments table body ('#assignments-tbody').
 const assignmentsTableBody = document.querySelector('#assignments-tbody');
-
+console.log('From element:',assignmentForm);
+console.log('Table body:',assignmentsTableBody);
 // --- Functions ---
 
 /**
@@ -76,14 +77,16 @@ function createAssignmentRow(assignment) {
 function renderTable() {
   // ... your implementation here ...
   // Clear the table body
+  if(!assignmentsTableBody)
+console.error('assignmentsTableBody is null');
+  return;
   assignmentsTableBody.innerHTML = '';
 
   // Loop through assignments and append rows
   assignments.forEach(assignment => {
     const row = createAssignmentRow(assignment);
     assignmentsTableBody.appendChild(row);
-  }); 
-}
+  });
 
 /**
  * TODO: Implement the handleAddAssignment function.
@@ -99,13 +102,19 @@ function renderTable() {
 function handleAddAssignment(event) {
   // ... your implementation here ...
   event.preventDefault();
-
+console.log('Form submitted');
   // Get form values
-  const title = assignmentForm.elements['title'].value;
-  const description = assignmentForm.elements['description'].value;
-  const dueDate = assignmentForm.elements['due-date'].value;
-  const files = assignmentForm.elements['files'].files;
+  const title = document.getElementById['title'].value;
+  const description = document.getElementById['description'].value;
+  const dueDate = document.getElementById['due-date'].value;
+  const files = document.getElementById['files'].files;
 
+  console.log('From values:', title, description, dueDate, files);
+
+  if (!title || !dueDate) {
+    alert('Title and Due Date are required.');
+    return;
+  }
   // Create new assignment object
   const newAssignment = {
     id: `asg_${Date.now()}`,
@@ -117,6 +126,7 @@ function handleAddAssignment(event) {
 
   // Add to assignments array
   assignments.push(newAssignment);
+  console.log('New assignment added:', newAssignment);
 
   // Refresh the table
   renderTable();
@@ -136,27 +146,39 @@ function handleAddAssignment(event) {
  * 4. Call `renderTable()` to refresh the list.
  */
 function handleTableClick(event) {
+  console.log('Table clicked:', event.target);
   // ... your implementation here ...
   if (event.target.classList.contains('delete-btn')) {
     const idToDelete = event.target.getAttribute('data-id');
+    console.log('Delete button clicked for ID:', idToDelete);
 
     // Filter out the assignment with the matching ID
-    assignments = assignments.filter(assignment => assignment.id !== idToDelete); 
+    assignments = assignments.filter(assignment => assignment.id !== idToDelete);
+    console.log('Updated assignments list:', assignments);
 
     // Refresh the table
     renderTable();
   }
 }
 
+if (event.target.classList.contains('delete-btn')) {
+  const idToDelete = event.target.getAttribute('data-id');
+  console.log('Delete button clicked for ID:', idToDelete);
+  alert('Delete functionality not implemented yet. ID: ' + idToDelete);
   /**
    * TODO: Implement the loadAndInitialize function.
    * This function needs to be 'async'.
    */
 async function loadAndInitialize() {
 try {
+  console.log('Loading assignments...');
   // Fetch data from 'assignments.json'
   const response = await fetch('assignments.json');
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const data = await response.json();
+  console.log('Assignments loaded:', data);
 
   // Store the result in the global `assignments` array
   assignments = data;
