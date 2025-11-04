@@ -24,6 +24,13 @@ let currentComments = [];
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
+const weekTitle = document.getElementById('week-title');
+const weekStartDate = document.getElementById('week-start-date');
+const weekDescription = document.getElementById('week-description');
+const weekLinksList = document.getElementById('week-links-list');
+const commentList = document.getElementById('comment-list');
+const commentForm = document.getElementById('comment-form');
+const newCommentText = document.getElementById('new-comment-text');
 
 // --- Functions ---
 
@@ -36,6 +43,9 @@ let currentComments = [];
  */
 function getWeekIdFromURL() {
   // ... your implementation here ...
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get('id');
 }
 
 /**
@@ -51,6 +61,20 @@ function getWeekIdFromURL() {
  */
 function renderWeekDetails(week) {
   // ... your implementation here ...
+  weekTitle.textContent = week.title;
+  weekStartDate.textContent = "Starts on: " + week.startDate;
+  weekDescription.textContent = week.description;
+  
+  // Clear existing links
+  weekLinksList.innerHTML = '';
+  week.links.forEach(link => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = link;
+    a.textContent = link;
+    li.appendChild(a);
+    weekLinksList.appendChild(li);
+  });
 }
 
 /**
@@ -61,6 +85,16 @@ function renderWeekDetails(week) {
  */
 function createCommentArticle(comment) {
   // ... your implementation here ...
+  const article = document.createElement('article');
+  const p = document.createElement('p');
+  p.textContent = comment.text;
+  const footer = document.createElement('footer');
+  footer.textContent = `— ${comment.author}`;
+  
+  article.appendChild(p);
+  article.appendChild(footer);
+  
+  return article;
 }
 
 /**
@@ -73,6 +107,11 @@ function createCommentArticle(comment) {
  */
 function renderComments() {
   // ... your implementation here ...
+  commentList.innerHTML = '';
+  currentComments.forEach(comment => {
+    const commentArticle = createCommentArticle(comment);
+    commentList.appendChild(commentArticle);
+  });
 }
 
 /**
@@ -90,6 +129,19 @@ function renderComments() {
  */
 function handleAddComment(event) {
   // ... your implementation here ...
+  event.preventDefault();
+  const commentText = newCommentText.value.trim();
+  if (commentText === '') {
+    return;
+  }
+  
+  const newComment = {
+    author: 'Student',
+    text: commentText
+  };
+  currentComments.push(newComment);
+  renderComments();
+  newCommentText.value = '';
 }
 
 /**
@@ -111,6 +163,35 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
+  currentWeekId = getWeekIdFromURL();
+  if (!currentWeekId) {
+    weekTitle.textContent = "Week not found.";
+    return;
+  }
+  
+  try {
+    const [weeksResponse, commentsResponse] = await Promise.all([
+      fetch('weeks.json'),
+      fetch('week-comments.json')
+    ]);
+    
+    const weeksData = await weeksResponse.json();
+    const commentsData = await commentsResponse.json();
+    
+    const week = weeksData.find(w => w.id === currentWeekId);
+    currentComments = commentsData[currentWeekId] || [];
+    
+    if (week) {
+      renderWeekDetails(week);
+      renderComments();
+      commentForm.addEventListener('submit', handleAddComment);
+    } else {
+      weekTitle.textContent = "Week not found.";
+    }
+  } catch (error) {
+    console.error('Error loading data:', error);
+    weekTitle.textContent = "Error loading week details.";
+  }   
 }
 
 // --- Initial Page Load ---

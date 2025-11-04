@@ -11,14 +11,18 @@
   3. Implement the TODOs below.
 */
 
+
 // --- Global Data Store ---
 // This will hold the weekly data loaded from the JSON file.
 let weeks = [];
 
 // --- Element Selections ---
 // TODO: Select the week form ('#week-form').
+const weekForm = document.querySelector('#week-form');
+
 
 // TODO: Select the weeks table body ('#weeks-tbody').
+const weeksTableBody = document.querySelector('#weeks-tbody');
 
 // --- Functions ---
 
@@ -32,8 +36,37 @@ let weeks = [];
  * - An "Edit" button with class "edit-btn" and `data-id="${id}"`.
  * - A "Delete" button with class "delete-btn" and `data-id="${id}"`.
  */
+
+
 function createWeekRow(week) {
-  // ... your implementation here ...
+  const tr = document.createElement('tr');
+
+  const titleCell = document.createElement('td');
+  titleCell.textContent = week.title || '';
+  tr.appendChild(titleCell);
+
+  const descriptionCell = document.createElement('td');
+  descriptionCell.textContent = week.description || '';
+  tr.appendChild(descriptionCell);
+
+  const actionsCell = document.createElement('td');
+
+  const editButton = document.createElement('button');
+  editButton.type = 'button';
+  editButton.textContent = 'Edit';
+  editButton.classList.add('edit-btn');
+  editButton.dataset.id = week.id;
+  actionsCell.appendChild(editButton);
+
+  const deleteButton = document.createElement('button');
+  deleteButton.type = 'button';
+  deleteButton.textContent = 'Delete';
+  deleteButton.classList.add('delete-btn');
+  deleteButton.dataset.id = week.id;
+  actionsCell.appendChild(deleteButton);
+
+  tr.appendChild(actionsCell);
+  return tr;
 }
 
 /**
@@ -44,8 +77,13 @@ function createWeekRow(week) {
  * 3. For each week, call `createWeekRow()`, and
  * append the resulting <tr> to `weeksTableBody`.
  */
+
 function renderTable() {
-  // ... your implementation here ...
+  weeksTableBody.innerHTML = '';
+  weeks.forEach(week => {
+    const row = createWeekRow(week);
+    weeksTableBody.appendChild(row);
+  });
 }
 
 /**
@@ -61,8 +99,37 @@ function renderTable() {
  * 6. Call `renderTable()` to refresh the list.
  * 7. Reset the form.
  */
+
 function handleAddWeek(event) {
-  // ... your implementation here ...
+  event.preventDefault();
+
+  const title = weekForm.querySelector('#week-title').value.trim();
+  const startDate = weekForm.querySelector('#week-start-date').value;
+  const description = weekForm.querySelector('#week-description').value.trim();
+  const linksText = weekForm.querySelector('#week-links').value;
+  const links = linksText.split('\n').map(l => l.trim()).filter(l => l !== '');
+
+  const editingId = weekForm.dataset.editingId;
+  if (editingId) {
+    const idx = weeks.findIndex(w => w.id === editingId);
+    if (idx !== -1) {
+      weeks[idx] = { ...weeks[idx], title, startDate, description, links };
+    }
+    delete weekForm.dataset.editingId;
+    document.querySelector('#add-week').textContent = 'Add Week';
+  } else {
+    const newWeek = {
+      id: `week_${Date.now()}`,
+      title,
+      startDate,
+      description,
+      links
+    };
+    weeks.push(newWeek);
+  }
+
+  renderTable();
+  weekForm.reset();
 }
 
 /**
@@ -76,7 +143,28 @@ function handleAddWeek(event) {
  * 4. Call `renderTable()` to refresh the list.
  */
 function handleTableClick(event) {
-  // ... your implementation here ...
+  const target = event.target;
+  if (target.classList.contains('delete-btn')) {
+    const weekId = target.dataset.id;
+    weeks = weeks.filter(week => week.id !== weekId);
+    renderTable();
+    return;
+  }
+
+  if (target.classList.contains('edit-btn')) {
+    const weekId = target.dataset.id;
+    const week = weeks.find(w => w.id === weekId);
+    if (!week) return;
+
+    weekForm.querySelector('#week-title').value = week.title || '';
+    weekForm.querySelector('#week-start-date').value = week.startDate || '';
+    weekForm.querySelector('#week-description').value = week.description || '';
+    weekForm.querySelector('#week-links').value = (week.links || []).join('\n');
+
+    weekForm.dataset.editingId = weekId;
+    document.querySelector('#add-week').textContent = 'Update Week';
+    weekForm.querySelector('#week-title').focus();
+  }
 }
 
 /**
@@ -90,8 +178,20 @@ function handleTableClick(event) {
  * 5. Add the 'click' event listener to `weeksTableBody` (calls `handleTableClick`).
  */
 async function loadAndInitialize() {
-  // ... your implementation here ...
+  try {
+    const response = await fetch('api/weeks.json');
+    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+    weeks = await response.json();
+  } catch (err) {
+    console.error('Could not load weeks.json — starting with empty list.', err);
+    weeks = [];
+  }
+
+  renderTable();
+  weekForm.addEventListener('submit', handleAddWeek);
+  weeksTableBody.addEventListener('click', handleTableClick);
 }
+
 
 // --- Initial Page Load ---
 // Call the main async function to start the application.

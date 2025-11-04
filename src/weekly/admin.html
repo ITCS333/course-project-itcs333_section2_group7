@@ -5,6 +5,7 @@
   Fill in the HTML elements as described in the comments.
   This page allows the teacher (admin) to perform full CRUD operations on the weekly course content.
 -->
+  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,7 @@
 
     <!-- TODO: Link to your CSS framework or stylesheet. -->
     <link rel="stylesheet" href="../common/styles.css">
+    <script src="admin.js" defer></script>
 </head>
 <body>
 
@@ -95,27 +97,8 @@
                     </tr>
                 </thead>
                 <!-- TODO: Create a 'tbody' for the data. -->
-                
-                <tbody>
-                    <!-- TODO: Add 1-2 rows of dummy data to see the structure. -->
-                    <!-- Example Row 1: -->
-                    <!-- TODO: Create a 'tr' for the first week. -->
-                    <tr>
-                        <!-- TODO: Add 'td' cells for a title (e.g., "Week 1: Intro to HTML") and a short description. -->
-                        <td>Week 1: Intro to HTML</td>
-                        <td>This week covers the basics of HTML structure and elements.</td>
-                        <!-- TODO: Add a 'td' containing the action buttons. -->
-                        <td>
-                            <!-- TODO: Add an "Edit" button. -->
-                            <button class="edit-week">Edit</button>
-                            <!-- TODO: Add a "Delete" button. -->
-                            <button class="delete-week">Delete</button>
-                        <!-- End of actions 'td'. -->
-                        </td>
-                    <!-- End of the row. -->
-                    </tr>
 
-                <!-- End of tbody. -->
+                <tbody id="weeks-tbody">
                 </tbody>
             <!-- End of table. -->
             </table>
