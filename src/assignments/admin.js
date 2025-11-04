@@ -186,19 +186,47 @@ try {
   // Call `renderTable()` to populate the table for the first time
   renderTable();
 
+  if (assignmentForm) {
+    assignmentForm.addEventListener('submit', handleAddAssignment);
+    console.log('Event listener added to assignmentForm');  
+  } else {
+    console.error('assignmentForm is null');
+  }
+
+  if (assignmentsTableBody) {
+    assignmentsTableBody.addEventListener('click', handleTableClick);
+    console.log('Event listener added to assignmentsTableBody');  
+  } else {
+    console.error('assignmentsTableBody is null');
+  }
+
+  console.log('Event listeners set up.');
+
   // Add the 'submit' event listener to `assignmentForm`
-  assignmentForm.addEventListener('submit', handleAddAssignment);
+  //11assignmentForm.addEventListener('submit', handleAddAssignment);
   // Add the 'click' event listener to `assignmentsTableBody` (calls `handleTableClick`).
-  assignmentsTableBody.addEventListener('click', handleTableClick);
+  //11assignmentsTableBody.addEventListener('click', handleTableClick);
 
   
 } catch (error) {
 
   console.error('Error loading assignments:', error);
 
+  assignments= {
+    id: 'asg_0',
+    title: 'Sample Assignment',
+    dueDate: '2025-10-31'
+  };
+  renderTable();
+
 }
 
 }
 
 // --- Initialization ---
+document.addEventListener('DOMContentLoaded',function(){
+  console.log('DOM fully loaded and parsed');
 loadAndInitialize();  
+});
+  }
+};
