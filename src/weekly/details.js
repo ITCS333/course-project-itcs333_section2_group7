@@ -62,19 +62,21 @@ function getWeekIdFromURL() {
 function renderWeekDetails(week) {
   // ... your implementation here ...
   weekTitle.textContent = week.title;
-  weekStartDate.textContent = "Starts on: " + week.startDate;
-  weekDescription.textContent = week.description;
+  weekStartDate.textContent = "Starts on: " + (week.startDate || '');
+  weekDescription.textContent = week.description || '';
+
   
   // Clear existing links
-  weekLinksList.innerHTML = '';
-  week.links.forEach(link => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = link;
-    a.textContent = link;
-    li.appendChild(a);
-    weekLinksList.appendChild(li);
-  });
+  if (Array.isArray(week.links)) {
+    week.links.forEach(link => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = link;
+      a.textContent = link;
+      li.appendChild(a);
+      weekLinksList.appendChild(li);
+    });
+  }
 }
 
 /**
@@ -171,16 +173,25 @@ async function initializePage() {
   
   try {
     const [weeksResponse, commentsResponse] = await Promise.all([
-      fetch('weeks.json'),
-      fetch('week-comments.json')
+      fetch('api/weeks.json'),
+      fetch('api/comments.json')
     ]);
-    
+
+    if (!weeksResponse.ok) throw new Error(`Failed to load weeks.json (${weeksResponse.status})`);
+    if (!commentsResponse.ok) throw new Error(`Failed to load comments.json (${commentsResponse.status})`);
+
     const weeksData = await weeksResponse.json();
     const commentsData = await commentsResponse.json();
-    
-    const week = weeksData.find(w => w.id === currentWeekId);
-    currentComments = commentsData[currentWeekId] || [];
-    
+
+    const week = Array.isArray(weeksData) ? weeksData.find(w => w.id === currentWeekId) : null;
+
+    // comments.json may be an object keyed by week id or an array with a weekId field
+    if (Array.isArray(commentsData)) {
+      currentComments = commentsData.filter(c => String(c.weekId) === String(currentWeekId));
+    } else {
+      currentComments = commentsData[currentWeekId] || [];
+    }
+
     if (week) {
       renderWeekDetails(week);
       renderComments();
