@@ -13,6 +13,7 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the week list ('#week-list-section').
+const listSection = document.getElementById('week-list-section');
 
 // --- Functions ---
 
@@ -25,6 +26,27 @@
  */
 function createWeekArticle(week) {
   // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const heading = document.createElement('h2');
+  heading.textContent = week.title || 'Untitled Week';
+
+  const startDate = document.createElement('p');
+  startDate.textContent = `Starts on: ${week.startDate || ''}`;
+
+  const description = document.createElement('p');
+  description.textContent = week.description || '';
+
+  const link = document.createElement('a');
+  link.href = `details.html?id=${encodeURIComponent(week.id)}`;
+  link.textContent = 'View Details & Discussion';
+
+  article.appendChild(heading);
+  article.appendChild(startDate);
+  article.appendChild(description);
+  article.appendChild(link);
+
+  return article;
 }
 
 /**
@@ -40,6 +62,32 @@ function createWeekArticle(week) {
  */
 async function loadWeeks() {
   // ... your implementation here ...
+  try {
+    const response = await fetch('api/weeks.json');
+    
+    if (!response.ok) {
+      throw new Error(`Failed to load weeks data: ${response.status}`);
+    }
+
+    const weeks = await response.json();
+
+    // Clear existing content
+    listSection.innerHTML = '';
+
+    // Create and append articles for each week
+    weeks.forEach(week => {
+      const weekArticle = createWeekArticle(week);
+      listSection.appendChild(weekArticle);
+    });
+    
+  }
+  catch (error) {
+    console.error('Error loading weeks:', error);
+    listSection.innerHTML = '<p> error loading course weeks. Please try again later.</p>';
+
+  }
+
+  
 }
 
 // --- Initial Page Load ---
