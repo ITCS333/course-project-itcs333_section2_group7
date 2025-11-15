@@ -1,0 +1,14 @@
+{
+  "name": "course-project-itcs333_section2_group7",
+  "version": "1.0.0",
+  "description": "Course project - simple static site with a tiny API for resources/comments",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

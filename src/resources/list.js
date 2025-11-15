@@ -13,6 +13,8 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the resource list ('#resource-list-section').
+// Element Selections
+const listSection = document.querySelector('#resource-list-section');
 
 // --- Functions ---
 
@@ -24,7 +26,24 @@
  * (This is how the detail page will know which resource to load).
  */
 function createResourceArticle(resource) {
-  // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const h2 = document.createElement('h2');
+  h2.textContent = resource.title;
+
+  const p = document.createElement('p');
+  p.textContent = resource.description;
+
+  const a = document.createElement('a');
+  a.href = `details.html?id=${encodeURIComponent(resource.id)}`;
+  a.textContent = 'View Resource & Discussion';
+  a.setAttribute('aria-label', `View ${resource.title}`);
+
+  article.appendChild(h2);
+  article.appendChild(p);
+  article.appendChild(a);
+
+  return article;
 }
 
 /**
@@ -39,7 +58,27 @@ function createResourceArticle(resource) {
  * - Append the returned <article> element to `listSection`.
  */
 async function loadResources() {
-  // ... your implementation here ...
+  try {
+    const res = await fetch('/api/resources');
+    if (!res.ok) throw new Error('Failed to load resources');
+    const resources = await res.json();
+
+    // Clear existing
+    listSection.innerHTML = '';
+
+    if (!Array.isArray(resources) || resources.length === 0) {
+      listSection.innerHTML = '<p>No resources available.</p>';
+      return;
+    }
+
+    resources.forEach(resource => {
+      const article = createResourceArticle(resource);
+      listSection.appendChild(article);
+    });
+  } catch (err) {
+    listSection.innerHTML = `<p>Error loading resources: ${err.message}</p>`;
+    console.error(err);
+  }
 }
 
 // --- Initial Page Load ---
