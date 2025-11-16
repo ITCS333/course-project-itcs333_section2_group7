@@ -1,107 +1,178 @@
-/*
-  Requirement: Add client-side validation to the login form.
 
-  Instructions:
-  1. Link this file to your HTML using a <script> tag with the 'defer' attribute.
-     Example: <script src="login.js" defer></script>
-  
-  2. In your login.html, add a <div> element *after* the </fieldset> but
-     *before* the </form> closing tag. Give it an id="message-container".
-     This div will be used to display success or error messages.
-     Example: <div id="message-container"></div>
-  
-  3. Implement the JavaScript functionality as described in the TODO comments.
-*/
-
-// --- Element Selections ---
-// We can safely select elements here because 'defer' guarantees
-// the HTML document is parsed before this script runs.
-
-// TODO: Select the login form. (You'll need to add id="login-form" to the <form> in your HTML).
-
-// TODO: Select the email input element by its ID.
-
-// TODO: Select the password input element by its ID.
-
-// TODO: Select the message container element by its ID.
-
-// --- Functions ---
-
-/**
- * TODO: Implement the displayMessage function.
- * This function takes two arguments:
- * 1. message (string): The message to display.
- * 2. type (string): "success" or "error".
- *
- * It should:
- * 1. Set the text content of `messageContainer` to the `message`.
- * 2. Set the class name of `messageContainer` to `type`
- * (this will allow for CSS styling of 'success' and 'error' states).
- */
+const loginForm = document.getElementById("login-form");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const messageContainer = document.getElementById("message-container");
 function displayMessage(message, type) {
-  // ... your implementation here ...
+  const messageContainer = document.getElementById("message-container");
+  if (! messageContainer) return;
+  messageContainer.textContent = message;
+  messageContainer.className = "";
+  messageContainer.classList.add(type, 'show');
 }
-
-/**
- * TODO: Implement the isValidEmail function.
- * This function takes one argument:
- * 1. email (string): The email string to validate.
- *
- * It should:
- * 1. Use a regular expression to check if the email format is valid.
- * 2. Return `true` if the email is valid (e.g., "test@example.com").
- * 3. Return `false` if the email is invalid (e.g., "test@", "test.com", "test@.com").
- *
- * A simple regex for this purpose is: /\S+@\S+\.\S+/
- */
 function isValidEmail(email) {
-  // ... your implementation here ...
+  const emailRegEx = /\S+@\S+\.\S+/ ;
+  return emailRegEx.test(email);
 }
-
-/**
- * TODO: Implement the isValidPassword function.
- * This function takes one argument:
- * 1. password (string): The password string to validate.
- *
- * It should:
- * 1. Check if the password length is 8 characters or more.
- * 2. Return `true` if the password is valid.
- * 3. Return `false` if the password is not valid.
- */
 function isValidPassword(password) {
-  // ... your implementation here ...
+  return password.length >= 8 ;
 }
 
-/**
- * TODO: Implement the handleLogin function.
- * This function will be the event handler for the form's "submit" event.
- * It should:
- * 1. Prevent the form's default submission behavior.
- * 2. Get the `value` from `emailInput` and `passwordInput`, trimming any whitespace.
- * 3. Validate the email using `isValidEmail()`.
- * - If invalid, call `displayMessage("Invalid email format.", "error")` and stop.
- * 4. Validate the password using `isValidPassword()`.
- * - If invalid, call `displayMessage("Password must be at least 8 characters.", "error")` and stop.
- * 5. If both email and password are valid:
- * - Call `displayMessage("Login successful!", "success")`.
- * - (Optional) Clear the email and password input fields.
- */
 function handleLogin(event) {
-  // ... your implementation here ...
+  event.preventDefault();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  if(! isValidEmail(email)){
+    displayMessage("Invalid email format.", "error");
+    return;
+  }
+  if(! isValidPassword(password)){
+    displayMessage("Password must be at least 8 characters.", "error")
+    return;
+  }
+    displayMessage("Login successful!", "success")
+  emailInput.value = "";
+  passwordInput.value = "";
 }
-
-/**
- * TODO: Implement the setupLoginForm function.
- * This function will be called once to set up the form.
- * It should:
- * 1. Check if `loginForm` exists.
- * 2. If it exists, add a "submit" event listener to it.
- * 3. The event listener should call the `handleLogin` function.
- */
 function setupLoginForm() {
-  // ... your implementation here ...
+  if(loginForm){
+    loginForm.addEventListener("submit", handleLogin);
+  }
 }
-
-// --- Initial Page Load ---
-// Call the main setup function to attach the event listener.
 setupLoginForm();
+let students = [];
+const studentTableBody = document.querySelector("#student-table tbody");
+const addStudentForm = document.getElementById("add-student-form");
+const changePasswordForm = document.getElementById("password-form");
+const searchInput = document.getElementById("search-input");
+const tableHeaders = document.querySelectorAll("#student-table thead th");
+function createStudentRow(student) {
+  const tr = document.createElement("tr");
+  tr.innerHTML =
+    `<td>${student.name}</td>
+    <td>${student.id}</td>
+    <td>${student.email}</td>
+    <td>
+      <button class="btn edit-btn" data-id="${student.id}">Edit</button>
+      <button class="btn delete-btn" data-id="${student.id}">Delete</button>
+    </td>`;
+  return tr;
+}
+function renderTable(studentArray) {
+  studentTableBody.innerHTML = "";
+  for (let i = 0; i < studentArray.length; i++) {
+    const row = createStudentRow(studentArray[i]);
+    studentTableBody.appendChild(row);
+  }
+}
+function handleChangePassword(event) {
+  event.preventDefault();
+  const currentPassword = document.getElementById("current-password").value.trim();
+  const newPassword = document.getElementById("new-password").value.trim();
+  const confirm = document.getElementById("confirm-password").value.trim();
+  if(newPassword !== confirm){
+    alert("Passwords do not match.")
+    return
+  }
+  if(newPassword.length < 8){
+    alert("Password must be at least 8 characters.")
+    return
+  }
+  alert("Password updated successfully!")
+  document.getElementById("current-password").value = "";
+  document.getElementById("new-password").value = "";
+  document.getElementById("confirm-password").value = "";
+}
+function handleAddStudent(event) {
+  event.preventDefault();
+  const name = document.getElementById("student-name").value.trim();
+  const id = document.getElementById("student-id").value.trim();
+  const email = document.getElementById("student-email").value.trim();
+  if(!name || !id || !email){
+    alert("Please fill out all required fields.")
+    return
+  }
+  for(let i=0 ; i<students.length ; i++){
+    if(students[i].id === id){
+      alert("A student with this ID already exists.")
+    return
+    }
+  }
+  let newStudent = {name, id, email};
+  students.push(newStudent);
+  renderTable(students);
+  document.getElementById("student-name").value = "";
+  document.getElementById("student-id").value = "";
+  document.getElementById("student-email").value = "";
+  document.getElementById("default-password").value = "";
+}
+function handleTableClick(event) {
+  if (event.target.classList.contains("delete-btn")) {
+    const id = event.target.dataset.id;
+    students = students.filter(student => student.id !== id);
+    renderTable(students);
+  } else if (event.target.classList.contains("edit-btn")) {
+    const id = event.target.dataset.id;
+    const student = students.find(s => s.id === id);
+    if (student) {
+      const newName = prompt("Edit student name:", student.name);
+      const newEmail = prompt("Edit student email:", student.email);
+      if (newName && newEmail) {
+        student.name = newName.trim();
+        student.email = newEmail.trim();
+        renderTable(students);
+      }
+    }
+  }
+}
+function handleSearch(event) {
+  const searchTerm = event.target.value.toLowerCase();
+  if (!searchTerm) {
+    renderTable(students);
+    return;
+  }
+  const filtered = students.filter(s =>
+    s.name.toLowerCase().includes(searchTerm)
+  );
+  renderTable(filtered);
+}
+function handleSort(event) {
+  const th = event.currentTarget;
+  const index = th.cellIndex;
+  const fields = ["name", "id", "email"];
+  const field = fields[index];
+
+  let direction = th.dataset.sortDir || "asc";
+  direction = direction === "asc" ? "desc" : "asc";
+  th.dataset.sortDir = direction;
+
+  students.sort((a, b) => {
+    let comparison = 0;
+    if (field === "id") {
+      comparison = (a.id || "").localeCompare(b.id || "", undefined, { numeric: true });
+    } else {
+      comparison = (a[field] || "").localeCompare(b[field] || "");
+    }
+    return direction === "asc" ? comparison : -comparison;
+  });
+  renderTable(students);
+}
+async function loadStudentsAndInitialize() {
+   try {
+    const response = await fetch("api/students.json");
+    if (!response.ok) {
+      console.error("Failed to load students.json");
+      return;
+    }
+    students = await response.json();
+  } catch (error) {
+    console.error("Error loading students.json:", error);
+  }
+  renderTable(students);
+  changePasswordForm.addEventListener("submit", handleChangePassword);
+  addStudentForm.addEventListener("submit", handleAddStudent);
+  studentTableBody.addEventListener("click", handleTableClick);
+  searchInput.addEventListener("input", handleSearch);
+  tableHeaders.forEach(th => th.addEventListener("click", handleSort));
+}
+loadStudentsAndInitialize();

@@ -1,1 +1,394 @@
-/* CSS Styles */
+/* CSS Styles task 1 */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --accent-color: #28a745;
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --dark-text: #343a40;
+    --card-bg: #ffffff;
+    --border-color: #dee2e6;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --header-height: 60px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--dark-text);
+    background-color: var(--light-bg);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.admin-header, .index-header {
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+    padding: 1rem 20px;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    margin: 5px 0;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.change-btn, .add-btn, .login-button {
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+    width: 100%;
+}
+
+.change-btn:hover, .add-btn:hover, .login-button:hover {
+    background-color: #0056b3;
+}
+
+.edit-btn {
+    background-color: var(--secondary-color);
+    color: var(--card-bg);
+    margin-right: 5px;
+}
+
+.edit-btn:hover {
+    background-color: #5a6268;
+}
+
+.delete-btn {
+    background-color: var(--danger-color);
+    color: var(--card-bg);
+}
+
+.delete-btn:hover {
+    background-color: #bd2130;
+}
+
+form {
+    display: grid;
+    gap: 15px;
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+label {
+    font-weight: 500;
+    display: block;
+    margin-top: 5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* |------------------------------------
+| login.html 
+|------------------------------------
+*/
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #00bfff 100%);
+}
+
+.login-main {
+    max-width: 400px;
+    width: 90%;
+}
+
+.login-section {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+}
+
+.login-title {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.login-fieldset {
+    border: none;
+    padding: 0;
+    box-shadow: none;
+}
+
+.login-legend {
+    display: none;
+}
+
+/* |------------------------------------
+| manage_users.html 
+|------------------------------------
+*/
+
+.admin-main {
+    padding: 20px;
+    display: grid;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.password-management-section, .student-management-section {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+}
+
+.section-title {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+.student-table th, .student-table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.student-table thead {
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+}
+
+.student-table tbody tr:nth-child(even) {
+    background-color: var(--light-bg);
+}
+
+.student-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.add-student-details {
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.add-student-summary {
+    display: block;
+    padding: 15px;
+    font-weight: bold;
+    background-color: #e9f5ff;
+    color: var(--primary-color);
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+}
+
+.add-student-summary:hover {
+    background-color: #d0e8ff;
+}
+
+.add-student-form fieldset {
+    border: none;
+    padding-top: 5px;
+    border-radius: 0;
+}
+
+.student-list-title {
+    margin-top: 30px;
+    color: var(--dark-text);
+    font-size: 1.3rem;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* |------------------------------------
+| index.html 
+|------------------------------------
+*/
+
+.index-page {
+    background-color: #f0f4f8;
+}
+
+.index-main {
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.index-nav {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+.index-nav h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.6rem;
+}
+
+.index-nav-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+}
+
+.index-section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.index-section li {
+    padding: 8px 0;
+}
+
+.index-nav-list a {
+    text-decoration: none;
+    color: var(--dark-text);
+    font-size: 1.1rem;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.index-nav-list a:hover {
+    background-color: var(--primary-color);
+    color: var(--card-bg);
+}
+
+.general-links { background-color: #f3f9ff; }
+.admin-links { background-color: #fff8f3; }
+.student-links { background-color: #f3fff3; }
+
+/* |------------------------------------
+| Responsive Design 
+|------------------------------------
+*/
+
+@media (min-width: 768px) {
+    .admin-main {
+        grid-template-columns: 1fr 2fr;
+        align-items: start;
+    }
+
+    .password-management-section {
+        max-width: 450px;
+        margin: 0 auto;
+    }
+    
+    .student-table th, .student-table td {
+        padding: 15px 20px;
+    }
+
+    .index-nav-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+
+    .general-links {
+        grid-column: 1 / span 3;
+        text-align: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .admin-header, .index-header {
+        padding: 0.8rem 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-main {
+        padding: 10px;
+        grid-template-columns: 1fr;
+    }
+
+    .student-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .student-table td {
+        white-space: normal;
+    }
+
+    .edit-btn, .delete-btn {
+        margin: 5px 0;
+        width: 100%;
+        display: block;
+    }
+}
+/* End of task 1 CSS Styles */
+
+
