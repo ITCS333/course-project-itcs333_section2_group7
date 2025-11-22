@@ -13,6 +13,8 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the assignment list ('#assignment-list-section').
+const listSection = document.getElementById("assignment-list-section");
+console.log('List section element:', listSection);
 
 // --- Functions ---
 
@@ -25,6 +27,26 @@
  */
 function createAssignmentArticle(assignment) {
   // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const h2 = document.createElement('h2');
+  h2.textContent = assignment.title;
+  article.appendChild(h2);
+
+  const dueDateP = document.createElement('p');
+  dueDateP.textContent = `Due: ${assignment.dueDate}`;
+  article.appendChild(dueDateP);
+
+  const descriptionP = document.createElement('p');
+  descriptionP.textContent = assignment.description;
+  article.appendChild(descriptionP);
+
+  const detailsLink = document.createElement('a');
+  detailsLink.href = `details.html?id=${assignment.id}`;
+  detailsLink.textContent = 'View Details';
+  article.appendChild(detailsLink);
+
+  return article;
 }
 
 /**
@@ -40,8 +62,18 @@ function createAssignmentArticle(assignment) {
  */
 async function loadAssignments() {
   // ... your implementation here ...
+  const response = await fetch('assignments.json');
+  const assignments = await response.json();
+
+  // Clear existing content
+  listSection.innerHTML = '';
+
+  assignments.forEach(assignment => {
+    const article = createAssignmentArticle(assignment);
+    listSection.appendChild(article);
+  });   
 }
 
 // --- Initial Page Load ---
 // Call the function to populate the page.
-loadAssignments();
+loadAssignments(); 
