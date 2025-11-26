@@ -80,9 +80,10 @@ function renderTable() {
   if(!assignmentsTableBody)
 console.error('assignmentsTableBody is null');
   return;
-  assignmentsTableBody.innerHTML = '';
+}
 
   // Loop through assignments and append rows
+  assignmentsTableBody.innerHTML = '';
   assignments.forEach(assignment => {
     const row = createAssignmentRow(assignment);
     assignmentsTableBody.appendChild(row);
@@ -160,11 +161,8 @@ function handleTableClick(event) {
     renderTable();
   }
 }
-}
-if (Event.target.classList.contains('delete-btn')) {
-  const idToDelete = Event.target.getAttribute('data-id');
-  console.log('Delete button clicked for ID:', idToDelete);
-  alert('Delete functionality not implemented yet. ID: ' + idToDelete);
+
+
   /**
    * TODO: Implement the loadAndInitialize function.
    * This function needs to be 'async'.
@@ -212,11 +210,11 @@ try {
 
   console.error('Error loading assignments:', error);
 
-  assignments= {
+  assignments=[ {
     id: 'asg_0',
     title: 'Sample Assignment',
     dueDate: '2025-10-31'
-  };
+  }]  ;
   renderTable();
 
 }
@@ -228,5 +226,5 @@ document.addEventListener('DOMContentLoaded',function(){
   console.log('DOM fully loaded and parsed');
 loadAndInitialize();  
 });
-  }
+  
 
