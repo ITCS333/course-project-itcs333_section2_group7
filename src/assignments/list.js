@@ -16,6 +16,10 @@
 const listSection = document.getElementById("assignment-list-section");
 console.log('List section element:', listSection);
 
+if (!listSection) {
+  console.error("Assignment list section not found. Make sure to add id='assignment-list-section' to the <section> in list.html.");
+}
+
 // --- Functions ---
 
 /**
@@ -30,19 +34,19 @@ function createAssignmentArticle(assignment) {
   const article = document.createElement('article');
 
   const h2 = document.createElement('h2');
-  h2.textContent = assignment.title;
+  h2.textContent = assignment.title || "Untitled Assignment";
   article.appendChild(h2);
 
   const dueDateP = document.createElement('p');
-  dueDateP.textContent = `Due: ${assignment.dueDate}`;
+  dueDateP.textContent = `Due: ${assignment.dueDate || "No Due Date"}`;
   article.appendChild(dueDateP);
 
   const descriptionP = document.createElement('p');
-  descriptionP.textContent = assignment.description;
+  descriptionP.textContent = assignment.description || "No Description Available";
   article.appendChild(descriptionP);
 
   const detailsLink = document.createElement('a');
-  detailsLink.href = `details.html?id=${assignment.id}`;
+  detailsLink.href = `details.html?id=${assignment.id || ""}`;
   detailsLink.textContent = 'View Details';
   article.appendChild(detailsLink);
 
@@ -62,16 +66,38 @@ function createAssignmentArticle(assignment) {
  */
 async function loadAssignments() {
   // ... your implementation here ...
+  try {
+    if (!listSection) {
+      listSection.innerHTML = "<p>Error: Assignment list section not found.</p>";
+    
+    }
   const response = await fetch('assignments.json');
+  if (!response.ok) {
+    throw new Error("Failed to fetch assignments.json: " + response.statusText + " (Status: " + response.status + ")");
+  }
   const assignments = await response.json();
 
   // Clear existing content
-  listSection.innerHTML = '';
-
+  if (listSection) {
+    listSection.innerHTML = '';
+  }
+if(!assignments || assignments.length === 0){
+  if (listSection) {
+    listSection.innerHTML = "<p>No assignments available.</p>";
+  }
+  return;
+}
+  // Loop through assignments and append articles
   assignments.forEach(assignment => {
     const article = createAssignmentArticle(assignment);
     listSection.appendChild(article);
   });   
+}catch (error) {
+    console.error("Error loading assignments:", error);
+    if (listSection) {
+      listSection.innerHTML = "<p>Error loading assignments. Please try again later.</p>";
+    }
+  }
 }
 
 // --- Initial Page Load ---
