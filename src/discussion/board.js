@@ -17,13 +17,16 @@ let topics = [];
 
 // --- Element Selections ---
 // TODO: Select the new topic form ('#new-topic-form').
+const newTopicForm = document.getElementById('new-topic-form');
 
 // TODO: Select the topic list container ('#topic-list-container').
+const topicListContainer = document.getElementById('topics-list');  
 
 // --- Functions ---
 
 /**
  * TODO: Implement the createTopicArticle function.
+
  * It takes one topic object {id, subject, author, date}.
  * It should return an <article> element matching the structure in `board.html`.
  * - The main link's `href` MUST be `topic.html?id=${id}`.
@@ -33,6 +36,13 @@ let topics = [];
  */
 function createTopicArticle(topic) {
   // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const heading = document.createElement('h3');
+  const link = document.createElement('a');
+  link.href = `topic.html?id=${encodeURIComponent(topic.id)}`;
+  link.textContent = topic.subject || 'No Subject';
+  heading.appendChild(link);
 }
 
 /**
@@ -45,7 +55,13 @@ function createTopicArticle(topic) {
  */
 function renderTopics() {
   // ... your implementation here ...
-}
+  topicListContainer.innerHTML = '';
+
+  topics.forEach(topic => {
+    const topicArticle = createTopicArticle(topic);
+    topicListContainer.appendChild(topicArticle);
+  });
+} 
 
 /**
  * TODO: Implement the handleCreateTopic function.
@@ -67,6 +83,10 @@ function renderTopics() {
  */
 function handleCreateTopic(event) {
   // ... your implementation here ...
+  event.preventDefault();
+
+  const subjectInput = document.getElementById('topic-subject');
+  const messageInput = document.getElementById('topic-message');
 }
 
 /**
@@ -81,7 +101,9 @@ function handleCreateTopic(event) {
  */
 function handleTopicListClick(event) {
   // ... your implementation here ...
-}
+  if (event.target.classList.contains('delete-btn')) {
+    const topicId = event.target.getAttribute('data-id'); 
+}}
 
 /**
  * TODO: Implement the loadAndInitialize function.
@@ -94,9 +116,26 @@ function handleTopicListClick(event) {
  * 5. Add the 'click' event listener to `topicListContainer` (calls `handleTopicListClick`).
  */
 async function loadAndInitialize() {
-  // ... your implementation here ...
+  try {
+    const response = await fetch('topics.json');
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    topics = await response.json();
+
+    renderTopics();
+    newTopicForm.addEventListener('submit', handleCreateTopic);
+    topicListContainer.addEventListener('click', handleTopicListClick);
+
+  } catch (err) {
+    console.error("Failed to load topics:", err);
+  }
 }
 
 // --- Initial Page Load ---
+
 // Call the main async function to start the application.
+
 loadAndInitialize();
+  
+
+

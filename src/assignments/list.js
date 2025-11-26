@@ -13,6 +13,7 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the assignment list ('#assignment-list-section').
+const listSection = document.getElementById('assignment-list-section');
 
 // --- Functions ---
 
@@ -24,7 +25,31 @@
  * This is how the detail page will know which assignment to load.
  */
 function createAssignmentArticle(assignment) {
-  // ... your implementation here ...
+    // Create the article element
+    const article = document.createElement('article');
+
+    // Create and append the title
+    const heading = document.createElement('h2');
+    heading.textContent = assignment.title || 'Untitled Assignment';
+    article.appendChild(heading);
+
+    // Create and append the due date
+    const dueDatePara = document.createElement('p');
+    dueDatePara.textContent = `Due Date: ${assignment.dueDate || 'TBA'}`;
+    article.appendChild(dueDatePara);
+
+    // Create and append the description
+    const descPara = document.createElement('p');
+    descPara.textContent = assignment.description || '';
+    article.appendChild(descPara);
+
+    // Create and append the "View Details" link
+    const link = document.createElement('a');
+    link.href = `details.html?id=${assignment.id}`;
+    link.textContent = 'View Details';
+    article.appendChild(link);
+
+    return article;
 }
 
 /**
@@ -39,7 +64,22 @@ function createAssignmentArticle(assignment) {
  * - Append the returned <article> element to `listSection`.
  */
 async function loadAssignments() {
-  // ... your implementation here ...
+    try {
+        const response = await fetch('assignments.json');
+        const assignments = await response.json();
+
+        // Clear any existing content
+        listSection.innerHTML = '';
+
+        // Loop through assignments and append each article
+        assignments.forEach(assignment => {
+            const article = createAssignmentArticle(assignment);
+            listSection.appendChild(article);
+        });
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        listSection.textContent = 'Failed to load assignments.';
+    }
 }
 
 // --- Initial Page Load ---

@@ -24,6 +24,13 @@ let currentComments = [];
 
 // --- Element Selections ---
 // TODO: Select all the elements you added IDs for in step 2.
+const assignmentTitle = document.getElementById('assignment-title');
+const assignmentDueDate = document.getElementById('assignment-due-date');
+const assignmentDescription = document.getElementById('assignment-description');
+const assignmentFilesList = document.getElementById('assignment-files-list');
+const commentList = document.getElementById('comment-list');
+const commentForm = document.getElementById('comment-form');
+const newCommentText = document.getElementById('new-comment-text');
 
 // --- Functions ---
 
@@ -36,6 +43,9 @@ let currentComments = [];
  */
 function getAssignmentIdFromURL() {
   // ... your implementation here ...
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get('id');
 }
 
 /**
@@ -50,6 +60,9 @@ function getAssignmentIdFromURL() {
  */
 function renderAssignmentDetails(assignment) {
   // ... your implementation here ...
+  assignmentTitle.textContent = assignment.title || 'Untitled Assignment';
+  assignmentDueDate.textContent = `Due: ${assignment.dueDate || 'TBA'}`;
+  assignmentDescription.textContent = assignment.description || '';
 }
 
 /**
@@ -59,6 +72,11 @@ function renderAssignmentDetails(assignment) {
  */
 function createCommentArticle(comment) {
   // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const messagePara = document.createElement('p');
+  messagePara.textContent = comment.text;
+  article.appendChild(messagePara);
 }
 
 /**
@@ -71,6 +89,12 @@ function createCommentArticle(comment) {
  */
 function renderComments() {
   // ... your implementation here ...
+  commentList.innerHTML = '';
+
+  currentComments.forEach(comment => {
+    const commentArticle = createCommentArticle(comment);
+    commentList.appendChild(commentArticle);
+  });
 }
 
 /**
@@ -88,6 +112,8 @@ function renderComments() {
  */
 function handleAddComment(event) {
   // ... your implementation here ...
+  event.preventDefault();
+  const commentText = newCommentText.value.trim();
 }
 
 /**
@@ -108,6 +134,11 @@ function handleAddComment(event) {
  */
 async function initializePage() {
   // ... your implementation here ...
+  currentAssignmentId = getAssignmentIdFromURL();
+  if (!currentAssignmentId) {
+    assignmentTitle.textContent = 'Error: No assignment ID provided in URL.';
+    return;
+  }
 }
 
 // --- Initial Page Load ---
