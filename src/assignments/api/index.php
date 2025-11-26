@@ -531,27 +531,45 @@ function createComment($db, $data) {
 
     // TODO: Validate that text is not empty after trimming
     if(trim($text)===''){
-        sendResponse(['error'])
+        sendResponse(['error' => 'Comment text cannot be empty'],400);
+        return;     
     }
     
     // TODO: Verify that the assignment exists
-    
+    $checkStmt = $db->prepare("SELECT id FROM assignments WHERE id = :id");
+    $checkStmt->bindParam(':id', $assignment_id, PDO::PARAM_INT);
+    $checkStmt->execute();
+    if (!$checkStmt->fetch()) {
+        sendResponse(['error' => 'Assignment not found'], 404);
+        return;
+    }
     
     // TODO: Prepare INSERT query for comment
-    
+    $sql = "INSERT INTO comments (assignment_id, author, text) VALUES (:assignment_id, :author, :text,NOW())";
+    $stmt = $db->prepare($sql);
     
     // TODO: Bind all parameters
-    
-    
+    $stmt->bindParam(':assignment_id', $assignment_id, PDO::PARAM_INT);
+    $stmt->bindParam(':author', $author, PDO::PARAM_STR);
+    $stmt->bindParam(':text', $text, PDO::PARAM_STR);
+
     // TODO: Execute the statement
-    
+    try {
+        $stmt->execute();
     
     // TODO: Get the ID of the inserted comment
-    
+    $commentId = $db->lastInsertId();
     
     // TODO: Return success response with created comment data
-    
-}
+    $sql = "SELECT * FROM comments WHERE id = :id";
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':id', $commentId, PDO::PARAM_INT);
+    $stmt->execute();
+    $comment = $stmt->fetch();
+    sendResponse($comment, 201);;
+    } catch (PDOException $e) {
+        sendResponse(['error' => 'Failed to create comment: ' . $e->getMessage()], 500);
+    }   
 
 
 /**
@@ -566,24 +584,44 @@ function createComment($db, $data) {
  */
 function deleteComment($db, $commentId) {
     // TODO: Validate that $commentId is provided and not empty
-    
+    if (empty($commentId)) {
+        sendResponse(['error' => 'Comment ID is required'], 400);
+        return;
+    }   
     
     // TODO: Check if comment exists
-    
-    
+    $checkStmt = $db->prepare("SELECT id FROM comments WHERE id = :id");
+    $checkStmt->bindParam(':id', $commentId, PDO::PARAM_INT);
+    $checkStmt->execute();
+    if (!$checkStmt->fetch()) {
+        sendResponse(['error' => 'Comment not found'], 404);
+        return;
+    }
+
     // TODO: Prepare DELETE query
-    
-    
+    $sql = "DELETE FROM comments WHERE id = :id";
+    $stmt = $db->prepare($sql);
+
     // TODO: Bind the :id parameter
-    
+    $stmt->bindParam(':id', $commentId, PDO::PARAM_INT);
+
     
     // TODO: Execute the statement
-    
+    try {
+        $stmt->execute();
     
     // TODO: Check if delete was successful
+    if ($stmt->rowCount() > 0) {
+        sendResponse(['message' => 'Comment deleted successfully']);
+    } else {
+        sendResponse(['error' => 'Failed to delete comment'], 500);
+    }
+    } catch (PDOException $e) {
+        // TODO: If delete failed, return 500 error
+        sendResponse(['error' => 'Failed to delete comment: ' . $e->getMessage()], 500);
+    }
     
     
-    // TODO: If delete failed, return 500 error
     
 }
 
@@ -594,8 +632,11 @@ function deleteComment($db, $commentId) {
 
 try {
     // TODO: Get the 'resource' query parameter to determine which resource to access
-    
-    
+    if (empty($resource)) {
+        sendResponse(['error' => 'Resource parameter is required'], 400);
+        exit;
+    }
+
     // TODO: Route based on HTTP method and resource type
     
     if ($method === 'GET') {
@@ -603,13 +644,21 @@ try {
         
         if ($resource === 'assignments') {
             // TODO: Check if 'id' query parameter exists
-            
+            if (!empty($assignmentId)) {
+                getAssignmentById($db, $assignmentId);
+            } else {
+                getAllAssignments($db);
+            }
         } elseif ($resource === 'comments') {
             // TODO: Check if 'assignment_id' query parameter exists
-            
+            if (!empty($assignmentIdForComments)) {
+                getCommentsByAssignmentId($db, $assignmentIdForComments);
+            } else {
+                sendResponse(['error' => 'assignment_id parameter is required for comments resource'], 400);
+            }
         } else {
             // TODO: Invalid resource, return 400 error
-            
+            sendResponse(['error' => 'Invalid resource'], 400);
         }
         
     } elseif ($method === 'POST') {
@@ -617,13 +666,13 @@ try {
         
         if ($resource === 'assignments') {
             // TODO: Call createAssignment($db, $data)
-            
+            createAssignment($db, $input);
         } elseif ($resource === 'comments') {
             // TODO: Call createComment($db, $data)
-            
+            createComment($db, $input);
         } else {
             // TODO: Invalid resource, return 400 error
-            
+            sendResponse(['error' => 'Invalid resource'], 400);
         }
         
     } elseif ($method === 'PUT') {
@@ -631,10 +680,10 @@ try {
         
         if ($resource === 'assignments') {
             // TODO: Call updateAssignment($db, $data)
-            
+            updateAssignment
         } else {
             // TODO: PUT not supported for other resources
-            
+            sendResponse(['error' => 'PUT method not supported for this resource'], 405);
         }
         
     } elseif ($method === 'DELETE') {
@@ -642,26 +691,27 @@ try {
         
         if ($resource === 'assignments') {
             // TODO: Get 'id' from query parameter or request body
-            
+            $idToDelete=!empty
         } elseif ($resource === 'comments') {
             // TODO: Get comment 'id' from query parameter
-            
+            $idToDelete = !empty($commentId) ? $commentId : null;
+            deleteComment($db, $idToDelete);
         } else {
             // TODO: Invalid resource, return 400 error
-            
+            sendResponse(['error' => 'Invalid resource'], 400);
         }
         
     } else {
         // TODO: Method not supported
-        
+        sendResponse(['error' => 'Method not supported'], 405);
     }
     
 } catch (PDOException $e) {
     // TODO: Handle database errors
-    
+    sendResponse(['error' => 'Database error: ' . $e->getMessage()], 500);
 } catch (Exception $e) {
     // TODO: Handle general errors
-    
+    sendResponse(['error' => 'SERVER error: ' . $e->getMessage()], 500);
 }
 
 
@@ -677,16 +727,19 @@ try {
  */
 function sendResponse($data, $statusCode = 200) {
     // TODO: Set HTTP response code
-    
+    http_response_code($statusCode);
     
     // TODO: Ensure data is an array
-    
-    
+    if (!is_array($data)) {
+        $data = ['data' => $data];
+    }
+
+    $response = array_merge(['status' => $statusCode], $data);
+
     // TODO: Echo JSON encoded data
-    
-    
+    echo json_encode($response, JSON_PRETTY_PRINT);
     // TODO: Exit to prevent further execution
-    
+    exit;   
 }
 
 
@@ -698,16 +751,17 @@ function sendResponse($data, $statusCode = 200) {
  */
 function sanitizeInput($data) {
     // TODO: Trim whitespace from beginning and end
-    
+    $data = trim($data);
     
     // TODO: Remove HTML and PHP tags
-    
-    
+    $data = strip_tags($data);
+
     // TODO: Convert special characters to HTML entities
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     
     
     // TODO: Return the sanitized data
-    
+    return $data;
 }
 
 
@@ -719,10 +773,10 @@ function sanitizeInput($data) {
  */
 function validateDate($date) {
     // TODO: Use DateTime::createFromFormat to validate
-    
+    $d=DateTime::createFromFormat('Y-m-d',$date);
     
     // TODO: Return true if valid, false otherwise
-    
+    return $d && $d->format('Y-m-d') === $date;
 }
 
 
@@ -735,10 +789,13 @@ function validateDate($date) {
  */
 function validateAllowedValue($value, $allowedValues) {
     // TODO: Check if $value exists in $allowedValues array
-    
+    if (!in_array($value, $allowedValues)) {
+        return false;
+    }
     
     // TODO: Return the result
-    
+    return true;
+
 }
 
 ?>
