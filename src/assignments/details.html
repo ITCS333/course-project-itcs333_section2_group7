@@ -29,7 +29,7 @@
         <!-- Section 1: Assignment Information -->
         <!-- TODO: Use an 'article' to display the main assignment information. -->
         <article>
-            <p id="due-date">Due: 2025-9-10</p>
+            <p id="assignment-due-date">Due: 2025-9-10</p>
             <h2>Description</h2>
             <p id="assignment-description">This assignment covers the basics of HTML, including structure, elements, and attributes.</p>
 
@@ -51,36 +51,20 @@
             <!-- TODO: Add a sub-heading ('h2') "Questions & Discussion". -->
             <h2>Questions & Discussion</h2>
             <div>
-                <!-- TODO: Add a container (like a 'div') for the list of comments. -->
-                <div class="comments-list">
-                    <!-- TODO: Add 1-2 dummy comments to show the structure. -->
+                <!-- Container for the list of comments. JS expects `id="comment-list"`. -->
+                <div id="comment-list">
+                    <!-- Placeholder comments (will be replaced by JS at runtime) -->
                     <article>
                         <p>Is it okay to use a 'section' inside an 'article'?</p>
                         <footer>Posted by: Milad Rafat</footer>
                     </article>
-                    <article>
-                        <p>What is the best way to structure an HTML document?</p>
-                        <footer>Posted by: Rashed </footer>
-                    </article>
                 </div>
-
-                <!-- Example Comment 1: -->
-                <article>
-                    <p>Is it okay to use a 'section' inside an 'article'?</p>
-                    <footer>Posted by: Milad Rafat</footer>
-                </article>
-
-                <!-- Example Comment 2: -->
-                <article>
-                    <p>What is the best way to structure an HTML document?</p>
-                    <footer>Posted by: Rashed </footer>
-                </article>
 
             <!-- Subsection 2.2: Add a Comment Form -->
             <!-- TODO: Create a 'form' for users to post new comments. Action can be '#'. -->
                 <!-- TODO: Use a 'fieldset' to group the controls. -->
                     <!-- TODO: Add a 'legend', e.g., "Ask a Question". -->
-                    <form id="new-comment-form" action="#">
+                    <form id="comment-form" action="#">
                 <fieldset>
                     <legend>Ask a Question</legend>
 
@@ -97,11 +81,7 @@
             </form>
         </section>
     </main>
-</body>
-</html>
-    </header>
-
     <!-- End of main. -->
-    </main>  
+    </main>
 </body>
 </html>

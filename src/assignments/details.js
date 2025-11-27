@@ -88,8 +88,8 @@ function renderAssignmentDetails(assignment) {
 
   // Clear existing files
   assignmentFilesList.innerHTML = "";
-  if(assignment.files &&assignment.files.length === 0){
-  assignment.files.forEach(file => {
+  if (assignment.files && assignment.files.length > 0) {
+    assignment.files.forEach(file => {
     const li = document.createElement("li");
     const a = document.createElement("a");
     
@@ -107,7 +107,7 @@ function renderAssignmentDetails(assignment) {
     li.appendChild(a);
     assignmentFilesList.appendChild(li);
   });
-}else{
+  } else {
   const li = document.createElement("li");
   li.textContent = "No attached files.";
   assignmentFilesList.appendChild(li);
@@ -222,9 +222,10 @@ async function initializePage() {
   }
 
   try {
+    // `details.js` lives in `src/assignments/` — API fixtures are under `src/assignments/api/`
     const [assignmentsResponse, commentsResponse] = await Promise.all([
-      fetch('assignments.json'),
-      fetch('comments.json')
+      fetch('./api/assignments.json'),
+      fetch('./api/comments.json')
     ]);
 
     if (!assignmentsResponse.ok) {
