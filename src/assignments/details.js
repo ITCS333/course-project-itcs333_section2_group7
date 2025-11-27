@@ -217,8 +217,8 @@ async function initializePage() {
   // ... your implementation here ...
   currentAssignmentId = getAssignmentIdFromURL();
   if (!currentAssignmentId) {
-    displayError("No assignment ID found in URL.");
-    return;
+    // No ID in URL — fall back to the first assignment from the fixtures.
+    console.warn('No assignment ID found in URL; will use the first assignment as fallback.');
   }
 
   try {
@@ -238,11 +238,21 @@ async function initializePage() {
     const assignmentsData = await assignmentsResponse.json();
     const commentsData = await commentsResponse.json();
 
-    const assignment = assignmentsData.find(asg => asg.id === currentAssignmentId);
-    
-    if(commentsData&&typeof commentsData === 'object'&&commentsData[currentAssignmentId]){
+    // Determine which assignment to render. If no ID in URL, use the first assignment as fallback.
+    let assignment = null;
+    if (!currentAssignmentId) {
+      if (Array.isArray(assignmentsData) && assignmentsData.length > 0) {
+        assignment = assignmentsData[0];
+        currentAssignmentId = assignment.id;
+      }
+    } else {
+      assignment = Array.isArray(assignmentsData) ? assignmentsData.find(asg => asg.id === currentAssignmentId) : null;
+    }
+
+    // Load comments for the selected assignment (comments.json is expected to be an object keyed by assignment id)
+    if (commentsData && typeof commentsData === 'object' && commentsData[currentAssignmentId]) {
       currentComments = Array.isArray(commentsData[currentAssignmentId]) ? commentsData[currentAssignmentId] : [];
-    }else{
+    } else {
       currentComments = [];
     }
 
@@ -253,7 +263,8 @@ async function initializePage() {
         commentForm.addEventListener('submit', handleAddComment);
       }
     } else {
-      console.error("Assignment not found for ID:", currentAssignmentId);
+      console.error('Assignment not found for ID:', currentAssignmentId);
+      displayError('Assignment not found.');
     }
   
 } catch (error) {
