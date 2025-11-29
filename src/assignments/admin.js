@@ -75,20 +75,18 @@ function createAssignmentRow(assignment) {
  * append the resulting <tr> to `assignmentsTableBody`.
  */
 function renderTable() {
-  // ... your implementation here ...
-  // Clear the table body
-  if(!assignmentsTableBody)
-console.error('assignmentsTableBody is null');
-  return;
-}
+  // Clear the table body and re-render rows from the global `assignments` array
+  if (!assignmentsTableBody) {
+    console.error('assignmentsTableBody is null');
+    return;
+  }
 
-  // Loop through assignments and append rows
   assignmentsTableBody.innerHTML = '';
   assignments.forEach(assignment => {
     const row = createAssignmentRow(assignment);
     assignmentsTableBody.appendChild(row);
   });
-
+}
 /**
  * TODO: Implement the handleAddAssignment function.
  * This is the event handler for the form's 'submit' event.
@@ -105,10 +103,13 @@ function handleAddAssignment(event) {
   event.preventDefault();
 console.log('Form submitted');
   // Get form values
-  const title = document.getElementById['title'].value;
-  const description = document.getElementById['description'].value;
-  const dueDate = document.getElementById['due-date'].value;
-  const files = document.getElementById['files'].files;
+  const title = document.getElementById('title') ? document.getElementById('title').value.trim() : '';
+  const description = document.getElementById('description') ? document.getElementById('description').value.trim() : '';
+  const dueDate = document.getElementById('due-date') ? document.getElementById('due-date').value : '';
+  const filesList = document.getElementById('files') ? document.getElementById('files').files : null;
+
+  // Convert FileList to a simple array of file names (in-memory only)
+  const files = filesList ? Array.from(filesList).map(f => f.name) : [];
 
   console.log('From values:', title, description, dueDate, files);
 
@@ -171,7 +172,8 @@ async function loadAndInitialize() {
 try {
   console.log('Loading assignments...');
   // Fetch data from 'assignments.json'
-  const response = await fetch('assignments.json');
+  // admin.js is located in `src/assignments/` — the fixtures live in `src/assignments/api/`
+  const response = await fetch('./api/assignments.json');
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }

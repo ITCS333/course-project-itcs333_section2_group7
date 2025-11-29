@@ -112,8 +112,8 @@ function renderAssignmentDetails(assignment) {
 
   // Clear existing files
   assignmentFilesList.innerHTML = "";
-  if(assignment.files &&assignment.files.length === 0){
-  assignment.files.forEach(file => {
+  if (assignment.files && assignment.files.length > 0) {
+    assignment.files.forEach(file => {
     const li = document.createElement("li");
     const a = document.createElement("a");
     
@@ -131,7 +131,7 @@ function renderAssignmentDetails(assignment) {
     li.appendChild(a);
     assignmentFilesList.appendChild(li);
   });
-}else{
+  } else {
   const li = document.createElement("li");
   li.textContent = "No attached files.";
   assignmentFilesList.appendChild(li);
@@ -262,18 +262,24 @@ async function initializePage() {
   currentAssignmentId = getAssignmentIdFromURL();
   if (!currentAssignmentId) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     assignmentTitle.textContent = 'Error: No assignment ID provided in URL.';
     return;
   }
 =======
     displayError("No assignment ID found in URL.");
     return;
+=======
+    // No ID in URL — fall back to the first assignment from the fixtures.
+    console.warn('No assignment ID found in URL; will use the first assignment as fallback.');
+>>>>>>> a7b675dab8bf5afde445b601b1f0356c46d92d1e
   }
 
   try {
+    // `details.js` lives in `src/assignments/` — API fixtures are under `src/assignments/api/`
     const [assignmentsResponse, commentsResponse] = await Promise.all([
-      fetch('assignments.json'),
-      fetch('comments.json')
+      fetch('./api/assignments.json'),
+      fetch('./api/comments.json')
     ]);
 
     if (!assignmentsResponse.ok) {
@@ -286,11 +292,21 @@ async function initializePage() {
     const assignmentsData = await assignmentsResponse.json();
     const commentsData = await commentsResponse.json();
 
-    const assignment = assignmentsData.find(asg => asg.id === currentAssignmentId);
-    
-    if(commentsData&&typeof commentsData === 'object'&&commentsData[currentAssignmentId]){
+    // Determine which assignment to render. If no ID in URL, use the first assignment as fallback.
+    let assignment = null;
+    if (!currentAssignmentId) {
+      if (Array.isArray(assignmentsData) && assignmentsData.length > 0) {
+        assignment = assignmentsData[0];
+        currentAssignmentId = assignment.id;
+      }
+    } else {
+      assignment = Array.isArray(assignmentsData) ? assignmentsData.find(asg => asg.id === currentAssignmentId) : null;
+    }
+
+    // Load comments for the selected assignment (comments.json is expected to be an object keyed by assignment id)
+    if (commentsData && typeof commentsData === 'object' && commentsData[currentAssignmentId]) {
       currentComments = Array.isArray(commentsData[currentAssignmentId]) ? commentsData[currentAssignmentId] : [];
-    }else{
+    } else {
       currentComments = [];
     }
 
@@ -301,7 +317,8 @@ async function initializePage() {
         commentForm.addEventListener('submit', handleAddComment);
       }
     } else {
-      console.error("Assignment not found for ID:", currentAssignmentId);
+      console.error('Assignment not found for ID:', currentAssignmentId);
+      displayError('Assignment not found.');
     }
   
 } catch (error) {
