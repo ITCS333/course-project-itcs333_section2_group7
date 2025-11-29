@@ -13,7 +13,16 @@
 
 // --- Element Selections ---
 // TODO: Select the section for the assignment list ('#assignment-list-section').
+<<<<<<< HEAD
 const listSection = document.getElementById('assignment-list-section');
+=======
+const listSection = document.getElementById("assignment-list-section");
+console.log('List section element:', listSection);
+
+if (!listSection) {
+  console.error("Assignment list section not found. Make sure to add id='assignment-list-section' to the <section> in list.html.");
+}
+>>>>>>> 6380ed047c20970b6134c13eff87a1495a7c9b3b
 
 // --- Functions ---
 
@@ -25,6 +34,7 @@ const listSection = document.getElementById('assignment-list-section');
  * This is how the detail page will know which assignment to load.
  */
 function createAssignmentArticle(assignment) {
+<<<<<<< HEAD
     // Create the article element
     const article = document.createElement('article');
 
@@ -50,6 +60,29 @@ function createAssignmentArticle(assignment) {
     article.appendChild(link);
 
     return article;
+=======
+  // ... your implementation here ...
+  const article = document.createElement('article');
+
+  const h2 = document.createElement('h2');
+  h2.textContent = assignment.title || "Untitled Assignment";
+  article.appendChild(h2);
+
+  const dueDateP = document.createElement('p');
+  dueDateP.textContent = `Due: ${assignment.dueDate || "No Due Date"}`;
+  article.appendChild(dueDateP);
+
+  const descriptionP = document.createElement('p');
+  descriptionP.textContent = assignment.description || "No Description Available";
+  article.appendChild(descriptionP);
+
+  const detailsLink = document.createElement('a');
+  detailsLink.href = `details.html?id=${assignment.id || ""}`;
+  detailsLink.textContent = 'View Details';
+  article.appendChild(detailsLink);
+
+  return article;
+>>>>>>> 6380ed047c20970b6134c13eff87a1495a7c9b3b
 }
 
 /**
@@ -64,6 +97,7 @@ function createAssignmentArticle(assignment) {
  * - Append the returned <article> element to `listSection`.
  */
 async function loadAssignments() {
+<<<<<<< HEAD
     try {
         const response = await fetch('assignments.json');
         const assignments = await response.json();
@@ -80,8 +114,43 @@ async function loadAssignments() {
         console.error('Error loading assignments:', error);
         listSection.textContent = 'Failed to load assignments.';
     }
+=======
+  // ... your implementation here ...
+  try {
+    if (!listSection) {
+      listSection.innerHTML = "<p>Error: Assignment list section not found.</p>";
+    
+    }
+  const response = await fetch('assignments.json');
+  if (!response.ok) {
+    throw new Error("Failed to fetch assignments.json: " + response.statusText + " (Status: " + response.status + ")");
+  }
+  const assignments = await response.json();
+
+  // Clear existing content
+  if (listSection) {
+    listSection.innerHTML = '';
+  }
+if(!assignments || assignments.length === 0){
+  if (listSection) {
+    listSection.innerHTML = "<p>No assignments available.</p>";
+  }
+  return;
+}
+  // Loop through assignments and append articles
+  assignments.forEach(assignment => {
+    const article = createAssignmentArticle(assignment);
+    listSection.appendChild(article);
+  });   
+}catch (error) {
+    console.error("Error loading assignments:", error);
+    if (listSection) {
+      listSection.innerHTML = "<p>Error loading assignments. Please try again later.</p>";
+    }
+  }
+>>>>>>> 6380ed047c20970b6134c13eff87a1495a7c9b3b
 }
 
 // --- Initial Page Load ---
 // Call the function to populate the page.
-loadAssignments();
+loadAssignments(); 
