@@ -1,9 +1,10 @@
 <?php
 /**
  * Database Connection Class
- * This class handles the connection to the MySQL database using PDO.
- * Other PHP files will include this file and call getConnection() to
- * obtain the PDO object.
+ * 
+ * Manages MySQL database connections using PDO.
+ * Other PHP scripts should include this file and call getConnection() 
+ * to obtain a configured PDO instance for database operations.
  */
 
 class Database {
@@ -11,26 +12,30 @@ class Database {
     private $db_name = "course";        
     private $username = "admin";        
     private $password = "password123";  
-    private $conn; 
+    private $connection;
+    
     /**
-     * Create and return a PDO database connection
+     * Establish and return a PDO database connection instance
      * 
      * @return PDO
      */
     public function getConnection() {
-        $this->conn = null;
+        $this->connection = null;
+        
         try {
-            $this->conn = new PDO(
+            $this->connection = new PDO(
                 "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
                 $this->username,
                 $this->password
             );
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
         } catch (PDOException $e) {
-            error_log("Database connection error: " . $e->getMessage());
-            exit("Database connection failed.");
+            error_log("DB Connection Error: " . $e->getMessage());
+            exit("Could not connect to database.");
         }
-        return $this->conn;
+        
+        return $this->connection;
     }
 }
 ?>

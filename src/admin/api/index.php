@@ -23,6 +23,7 @@
  * 
  * Response Format: JSON
  */
+// --- Session Management ---
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -33,6 +34,8 @@ if (session_status() === PHP_SESSION_NONE) {
 // Allow cross-origin requests (CORS) if needed
 // Allow specific HTTP methods (GET, POST, PUT, DELETE, OPTIONS)
 // Allow specific headers (Content-Type, Authorization)
+
+
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -47,8 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // TODO: Include the database connection class
 // Assume the Database class has a method getConnection() that returns a PDO instance
-require_once _DIR_ . "/../../common/db.php";
+require_once __DIR__ . "/../../common/db.php";
 // TODO: Get the PDO database connection
+
 $database = new Database();
 $db = $database->getConnection();
 
@@ -63,7 +67,7 @@ $rawInput  = file_get_contents('php://input');
 $inputData = json_decode($rawInput, true) ?? [];
 
 // TODO: Parse query parameters for filtering and searching
-$studentIdQuery = $_GET['student_id'] ?? null;
+$studIdParam = $_GET['student_id'] ?? null;
 $action = $_GET['action'] ?? null;
 $search = $_GET['search'] ?? null;
 $sort   = $_GET['sort'] ?? null;
@@ -151,7 +155,7 @@ function getStudentById($db, $studentId) {
     if ($student) {
         sendResponse(['success' => true, 'data' => $student]);
     } else {
-        sendResponse(['success' => false, 'message' => 'Student not found'], 404);
+        sendResponse(['success' => false, 'message' => 'Student record not found'], 404);
     }
 }
 
@@ -171,7 +175,7 @@ function createStudent($db, $data) {
     // Check if student_id, name, email, and password are provided
     // If any field is missing, return error response with 400 status
     if (empty($data['student_id']) || empty($data['name']) || empty($data['email']) || empty($data['password'])) {
-        sendResponse(['success' => false, 'message' => 'Missing required fields'], 400);
+        sendResponse(['success' => false, 'message' => 'All required fields must be provided'], 400);
     }
 
     // TODO: Sanitize input data
@@ -183,7 +187,7 @@ function createStudent($db, $data) {
     $password = $data['password'];
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        sendResponse(['success'=>false,'message'=>'Invalid email format'],400);
+        sendResponse(['success'=>false,'message'=>'Email address is invalid'],400);
     }
 
     // TODO: Check if student_id or email already exists
@@ -192,7 +196,7 @@ function createStudent($db, $data) {
     $check = $db->prepare("SELECT 1 FROM students WHERE student_id = :id OR email = :email");
     $check->execute([':id'=>$student_id, ':email'=>$email]);
     if ($check->fetchColumn()) {
-        sendResponse(['success' => false, 'message' => 'Student already exists'], 409);
+        sendResponse(['success' => false, 'message' => 'A student with this ID or email already exists'], 409);
     }
 
     // TODO: Hash the password
@@ -414,31 +418,39 @@ function changePassword($db, $data) {
         sendResponse(['success' => false, 'message' => 'Failed to change password'],500);
     }
 }
+
+/* Main request router - directs to appropriate handler based on HTTP method */
 try {
 // TODO: Route the request based on HTTP method
     if ($method === 'GET') {
         // TODO: Check if student_id is provided in query parameters
         // If yes, call getStudentById()
         // If no, call getStudents() to get all students (with optional search/sort)
-        $studentIdQuery ? getStudentById($db,$studentIdQuery) : getStudents($db);
-    }
+        if ($studIdParam) {
+        getStudentById($db, $studIdParam);
+        } else {
+         getStudents($db, $search, $sort, $order);
+          }}
+          
     elseif ($method === 'POST') {
         // TODO: Check if this is a change password request
         // Look for action=change_password in query parameters
         // If yes, call changePassword()
         // If no, call createStudent()
-        $action === 'change_password'
-            ? changePassword($db,$inputData)
-            : createStudent($db,$inputData);
+        if ($action === 'change_password') {
+            changePassword($db, $inputData);
+        } else {
+            createStudent($db, $inputData);
+        }
     }
     elseif ($method === 'PUT') {
          // TODO: Call updateStudent()
-        updateStudent($db,$inputData);
+        updateStudent($db, $inputData);
     }
     elseif ($method === 'DELETE') {
         // TODO: Get student_id from query parameter or request body
         // Call deleteStudent()
-        deleteStudent($db,$studentIdQuery ?? $inputData['student_id'] ?? null);
+        deleteStudent($db, $studIdParam ?? $inputData['student_id'] ?? null);
     }
     else {
         // TODO: Return error for unsupported methods
@@ -451,14 +463,16 @@ try {
     // TODO: Handle database errors
     // Log the error message (optional)
     // Return generic error response with 500 status
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['error' => 'Database error occurred']);
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Database operation failed']);
+    exit();
 
 } catch (Exception $e) {
     // TODO: Handle general errors
     // Return error response with 500 status
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['error' => 'An unexpected error occurred']);
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'An unexpected server error occurred']);
+    exit();
 }
 
 

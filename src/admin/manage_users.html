@@ -23,7 +23,9 @@
           <label for="confirm-password">Confirm New Password:</label>
           <input type="password" id="confirm-password" required>
           <button type="submit" class="btn change-btn" id="change">Update Password</button>
-        </fieldset></form></section>
+        </fieldset>
+      </form>
+    </section>
     <section class="student-management-section">
       <h2 class="section-title">Manage Students</h2>
       <details class="add-student-details">
@@ -38,9 +40,11 @@
             <label for="student-email">Email:</label>
             <input type="email" id="student-email" required>
             <label for="default-password">Default Password:</label>
-            <input type="text" id="default-password" value="">
+            <input type="text" id="default-password" value="password123">
             <button type="submit" class="btn add-btn" id="add">Add Student</button>
-          </fieldset></form></details>
+          </fieldset>
+        </form>
+      </details>
       <h3 class="student-list-title">Registered Students</h3>
       <table class="student-table" id="student-table">
         <thead>
@@ -59,7 +63,8 @@
             <td>
               <button class="btn edit-btn">Edit</button>
               <button class="btn delete-btn">Delete</button>
-            </td></tr>
+            </td>
+          </tr>
         </tbody>
       </table>
     </section>
