@@ -12,11 +12,14 @@
 // --- Global Data Store ---
 // This array will be populated with data fetched from 'students.json'.
 let students = [];
+
 // --- Element Selections ---
 // We can safely select elements here because 'defer' guarantees
 // the HTML document is parsed before this script runs.
+
 // TODO: Select the student table body (tbody).
 const studentTableBody = document.querySelector("#student-table tbody");
+
 // TODO: Select the "Add Student" form.
 // (You'll need to add id="add-student-form" to this form in your HTML).
 const addStudentForm = document.getElementById("add-student-form");
@@ -28,7 +31,6 @@ const changePasswordForm = document.getElementById("password-form");
 // TODO: Select the search input field.
 // (You'll need to add id="search-input" to this input in your HTML).
 const searchInput = document.getElementById("search-input");
-
 
 // TODO: Select all table header (th) elements in thead.
 const tableHeaders = document.querySelectorAll("#student-table thead th");
@@ -49,8 +51,7 @@ const tableHeaders = document.querySelectorAll("#student-table thead th");
 function createStudentRow(student) {
   const tr = document.createElement("tr");
 
-  tr.innerHTML =
-    `<td>${student.name}</td>
+  tr.innerHTML = `<td>${student.name}</td>
     <td>${student.id}</td>
     <td>${student.email}</td>
     <td>
@@ -94,17 +95,17 @@ function handleChangePassword(event) {
   const newPassword = document.getElementById("new-password").value.trim();
   const confirm = document.getElementById("confirm-password").value.trim();
 
-  if(newPassword !== confirm){
-    alert("Passwords do not match.")
-    return
+  if (newPassword !== confirm) {
+    alert("Passwords do not match.");
+    return;
   }
 
-  if(newPassword.length < 8){
-    alert("Password must be at least 8 characters.")
-    return
+  if (newPassword.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
   }
 
-  alert("Password updated successfully!")
+  alert("Password updated successfully!");
   document.getElementById("current-password").value = "";
   document.getElementById("new-password").value = "";
   document.getElementById("confirm-password").value = "";
@@ -131,19 +132,19 @@ function handleAddStudent(event) {
   const id = document.getElementById("student-id").value.trim();
   const email = document.getElementById("student-email").value.trim();
 
-  if(!name || !id || !email){
-    alert("Please fill out all required fields.")
-    return
+  if (!name || !id || !email) {
+    alert("Please fill out all required fields.");
+    return;
   }
 
-  for(let i=0 ; i<students.length ; i++){
-    if(students[i].id === id){
-      alert("A student with this ID already exists.")
-    return
-    }
+  // FIXED: Use find() instead of for loop with return
+  const existingStudent = students.find(student => student.id === id);
+  if (existingStudent) {
+    alert("A student with this ID already exists.");
+    return;
   }
 
-  let newStudent = {name, id, email};
+  let newStudent = { name, id, email };
   students.push(newStudent);
 
   renderTable(students);
@@ -151,7 +152,8 @@ function handleAddStudent(event) {
   document.getElementById("student-name").value = "";
   document.getElementById("student-id").value = "";
   document.getElementById("student-email").value = "";
-  document.getElementById("default-password").value = "password123";
+  // FIXED: Clear it, don't set to hardcoded value
+  document.getElementById("default-password").value = "";
 }
 
 /**
@@ -184,6 +186,7 @@ function handleTableClick(event) {
     }
   }
 }
+
 /**
  * TODO: Implement the handleSearch function.
  * This function will be called on the "input" event of the `searchInput`.
@@ -235,7 +238,8 @@ function handleSort(event) {
   students.sort((a, b) => {
     let comparison = 0;
     if (field === "id") {
-      comparison = (a.id || "").localeCompare(b.id || "", undefined, { numeric: true });
+      // FIXED: Compare as numbers, not localeCompare
+      comparison = Number(a.id) - Number(b.id);
     } else {
       comparison = (a[field] || "").localeCompare(b[field] || "");
     }
@@ -262,7 +266,7 @@ function handleSort(event) {
  * - "click" on each header in `tableHeaders` -> `handleSort`
  */
 async function loadStudentsAndInitialize() {
-   try {
+  try {
     const response = await fetch("api/students.json");
     if (!response.ok) {
       console.error("Failed to load students.json");
@@ -274,7 +278,7 @@ async function loadStudentsAndInitialize() {
   }
 
   renderTable(students);
- 
+
   changePasswordForm.addEventListener("submit", handleChangePassword);
   addStudentForm.addEventListener("submit", handleAddStudent);
   studentTableBody.addEventListener("click", handleTableClick);
@@ -285,3 +289,4 @@ async function loadStudentsAndInitialize() {
 // --- Initial Page Load ---
 // Call the main async function to start the application.
 loadStudentsAndInitialize();
+

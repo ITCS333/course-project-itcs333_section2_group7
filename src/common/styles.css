@@ -1,4 +1,4 @@
-/* CSS Styles - Beautiful Color Palette */
+/* CSS Styles  */
 :root {
     /* Elegant Color Palette */
     --primary-color: #4f46e5;
@@ -32,6 +32,9 @@
     --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --header-height: 70px;
+
+    /* NEW: Security/Login Colors */
+    --secure-border: var(--accent-color); 
 }
 
 /* Base Styles */
@@ -84,12 +87,14 @@ body {
 
 /* Enhanced Buttons */
 .btn {
-    padding: 0.75rem 1.5rem;
+    /*   Increased padding for a larger button */
+    padding: 0.9rem 1.75rem;
     border: none;
     border-radius: var(--radius-md);
     cursor: pointer;
+    /*   Increased font size slightly */
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1rem;
     transition: var(--transition);
     text-decoration: none;
     text-align: center;
@@ -117,16 +122,34 @@ body {
     left: 100%;
 }
 
-.change-btn, .add-btn, .login-button {
+.change-btn, .add-btn {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     color: white;
     border: none;
 }
 
-.change-btn:hover, .add-btn:hover, .login-button:hover {
+.change-btn:hover, .add-btn:hover {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+}
+
+.login-button {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #10b981 100%); 
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4); 
+}
+
+.login-button:hover {
+    background: linear-gradient(135deg, #0e7490 0%, var(--success-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.login-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
 }
 
 .edit-btn {
@@ -188,17 +211,37 @@ label {
     font-size: 0.95rem;
 }
 
+/* NEW: Input Wrapper for Icons (for Login Form) */
+.input-group {
+    position: relative;
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--light-text);
+    font-size: 1.1rem;
+    pointer-events: none; /* Allows clicks to pass through to the input */
+    z-index: 10;
+}
+
 input[type="text"],
 input[type="password"],
 input[type="email"] {
     width: 100%;
-    padding: 0.875rem 1rem;
+    /* Added padding-left for icon */
+    padding: 0.875rem 1rem 0.875rem 3rem; 
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     background: white;
     font-size: 1rem;
     transition: var(--transition);
     font-family: var(--font-family);
+    position: relative; 
 }
 
 input:focus {
@@ -207,13 +250,13 @@ input:focus {
     outline: none;
 }
 
-/* Login Page - Beautiful Design */
+/*  LOGIN PAGE: Deep Teal/Ocean Gradient */
 .login-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(150deg, #0e7490 0%, #06b6d4 100%); 
     padding: 1rem;
 }
 
@@ -228,16 +271,40 @@ input:focus {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    border: 3px solid var(--secure-border); 
+    backdrop-filter: none;
+    transition: var(--transition);
 }
 
+.login-section:hover {
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(6, 182, 212, 0.3);
+}
+
+/*  Title/Subtitle Improvements for "Welcome Back" and "Secure Login" */
 .login-title {
-    color: var(--primary-color);
+    color: var(--primary-dark); 
     margin-bottom: 1.5rem;
     font-size: 1.75rem;
-    font-weight: 700;
+    font-weight: 800; 
+    letter-spacing: 0.5px;
+    text-shadow: var(--shadow-sm);
+    display: block;
+    padding-bottom: 0.5rem;
 }
+
+.login-title-secure {
+    display: block;
+    color: var(--success-color); 
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: -1rem; 
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
 
 /* Admin Main Layout */
 .admin-main {
@@ -495,6 +562,7 @@ input:focus {
         overflow-x: auto;
     }
     
+    /* Adjusted for new .btn padding, keeping it full width on mobile */
     .btn {
         width: 100%;
     }
