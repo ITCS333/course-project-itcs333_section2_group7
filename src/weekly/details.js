@@ -32,6 +32,13 @@ const commentList = document.getElementById('comment-list');
 const commentForm = document.getElementById('comment-form');
 const newCommentText = document.getElementById('new-comment-text');
 
+// Defensive guard: prevent native form POST to static server (avoids HTTP 405)
+if (commentForm) {
+  commentForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+  });
+}
+
 // --- Functions ---
 
 /**
@@ -65,8 +72,9 @@ function renderWeekDetails(week) {
   weekStartDate.textContent = "Starts on: " + (week.startDate || '');
   weekDescription.textContent = week.description || '';
 
+  // Clear existing links before rendering
+  weekLinksList.innerHTML = '';
   
-  // Clear existing links
   if (Array.isArray(week.links)) {
     week.links.forEach(link => {
       const li = document.createElement('li');
@@ -166,8 +174,11 @@ function handleAddComment(event) {
 async function initializePage() {
   // ... your implementation here ...
   currentWeekId = getWeekIdFromURL();
+  
+  // If no id is provided, keep the static HTML content and just attach comment handler
   if (!currentWeekId) {
-    weekTitle.textContent = "Week not found.";
+    renderComments();
+    commentForm.addEventListener('submit', handleAddComment);
     return;
   }
   
