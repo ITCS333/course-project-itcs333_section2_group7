@@ -17,8 +17,10 @@ let resources = [];
 
 // --- Element Selections ---
 // TODO: Select the resource form ('#resource-form').
+const resourceForm = document.getElementById('resource-form');
 
 // TODO: Select the resources table body ('#resources-tbody').
+const resourcesTableBody = document.getElementById('resources-tbody');
 
 // --- Functions ---
 
@@ -34,6 +36,28 @@ let resources = [];
  */
 function createResourceRow(resource) {
   // ... your implementation here ...
+
+  const tr = document.createElement('tr');
+  const titleTd = document.createElement('td');
+  titleTd.textContent = resource.title;
+  const descTd = document.createElement('td');
+  descTd.textContent = resource.description;
+  const actionsTd = document.createElement('td');
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  editBtn.classList.add('edit-btn');
+  editBtn.setAttribute('data-id', resource.id);
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.classList.add('delete-btn');
+  deleteBtn.setAttribute('data-id', resource.id);
+  actionsTd.appendChild(editBtn);
+  actionsTd.appendChild(deleteBtn);
+  tr.appendChild(titleTd);
+  tr.appendChild(descTd);
+  tr.appendChild(actionsTd);
+  return tr;
+
 }
 
 /**
@@ -46,6 +70,13 @@ function createResourceRow(resource) {
  */
 function renderTable() {
   // ... your implementation here ...
+
+  resourcesTableBody.innerHTML = '';
+  resources.forEach(resource => {
+    const row = createResourceRow(resource);
+    resourcesTableBody.appendChild(row);
+  });
+
 }
 
 /**
@@ -61,6 +92,21 @@ function renderTable() {
  */
 function handleAddResource(event) {
   // ... your implementation here ...
+
+  event.preventDefault();
+  const title = document.getElementById['resource-title'].value.trim();
+  const description = document.getElementById['resource-description'].value.trim();
+  const link = document.getElementById['resource-link'].value.trim();
+  const newResource = {
+    id: `res_${Date.now()}`,
+    title: title,
+    description: description,
+    link: link
+  };
+  resources.push(newResource);
+  renderTable();
+  resourceForm.reset();
+  
 }
 
 /**
@@ -75,6 +121,14 @@ function handleAddResource(event) {
  */
 function handleTableClick(event) {
   // ... your implementation here ...
+
+  if (event.target.classList.contains('delete-btn')) {
+    const resourceId = event.target.getAttribute('data-id');
+    resources = resources.filter(resource => resource.id !== resourceId);
+    renderTable();
+
+  }
+
 }
 
 /**
@@ -89,8 +143,16 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+
+  const response = await fetch('resources.json');
+  resources = await response.json();
+  renderTable();
+  resourceForm.addEventListener('submit', handleAddResource);
+  resourcesTableBody.addEventListener('click', handleTableClick);
+
 }
 
 // --- Initial Page Load ---
 // Call the main async function to start the application.
 loadAndInitialize();
+

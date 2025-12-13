@@ -673,20 +673,32 @@ try {
             // TODO: Check if week_id is provided in query parameters
             // If yes, call getWeekById()
             // If no, call getAllWeeks() to get all weeks (with optional search/sort)
+            if ($method === 'GET') {
+                if (isset($_GET['week_id'])) {
+                    getWeekById($db, $_GET['week_id']);
+                } else {
+                    getAllWeeks($db);
+                }
+            }
             
         } elseif ($method === 'POST') {
             // TODO: Call createWeek() with the decoded request body
+            createWeek($db, $inputData);
             
         } elseif ($method === 'PUT') {
             // TODO: Call updateWeek() with the decoded request body
+            updateWeek($db, $inputData);
             
         } elseif ($method === 'DELETE') {
             // TODO: Get week_id from query parameter or request body
             // Call deleteWeek()
+            $weekId = $_GET['week_id'] ?? null $inputData['week_id'] ?? null;
+            deleteWeek($db, $weekId);
             
         } else {
             // TODO: Return error for unsupported methods
             // Set HTTP status to 405 (Method Not Allowed)
+            sendError("Method not allowed for weeks resource", 405);
         }
     }
     
@@ -696,17 +708,23 @@ try {
         if ($method === 'GET') {
             // TODO: Get week_id from query parameters
             // Call getCommentsByWeek()
+            $weekId = $_GET['week_id'] ?? null;
+            getCommentsByWeek($db, $weekId);
             
         } elseif ($method === 'POST') {
             // TODO: Call createComment() with the decoded request body
+            createComment($db, $inputData);
             
         } elseif ($method === 'DELETE') {
             // TODO: Get comment id from query parameter or request body
             // Call deleteComment()
+            $commentId = $_GET['id'] ?? null $inputData['id'] ?? null;
+            deleteComment($db, $commentId);
             
         } else {
             // TODO: Return error for unsupported methods
             // Set HTTP status to 405 (Method Not Allowed)
+            sendError("Method not allowed for comments resource", 405);
         }
     }
     
@@ -715,6 +733,7 @@ try {
         // TODO: Return error for invalid resource
         // Set HTTP status to 400 (Bad Request)
         // Return JSON error message: "Invalid resource. Use 'weeks' or 'comments'"
+        sendError("Invalid resource. Use 'weeks' or 'comments'", 400);
     }
     
 } catch (PDOException $e) {
@@ -725,11 +744,15 @@ try {
     // TODO: Return generic error response with 500 status
     // Do NOT expose database error details to the client
     // Return message: "Database error occurred"
+    error_log("Database error: " . $e->getMessage());
+    sendError("Database error occurred", 500);
     
 } catch (Exception $e) {
     // TODO: Handle general errors
     // Log the error message (optional)
     // Return error response with 500 status
+    error_log("General error: " . $e->getMessage());
+    sendError("An error occurred", 500);
 }
 
 
@@ -746,11 +769,14 @@ try {
 function sendResponse($data, $statusCode = 200) {
     // TODO: Set HTTP response code
     // Use http_response_code($statusCode)
+    http_response_code($statusCode);
     
     // TODO: Echo JSON encoded data
     // Use json_encode($data)
+    echo json_encode($data);
     
     // TODO: Exit to prevent further execution
+    exit();
 }
 
 
@@ -763,8 +789,13 @@ function sendResponse($data, $statusCode = 200) {
 function sendError($message, $statusCode = 400) {
     // TODO: Create error response array
     // Structure: ['success' => false, 'error' => $message]
+    $errorResponse = [
+        'success' => false,
+        'error' => $message
+    ];
     
     // TODO: Call sendResponse() with the error array and status code
+    sendResponse($errorResponse, $statusCode);
 }
 
 
@@ -777,8 +808,11 @@ function sendError($message, $statusCode = 400) {
 function validateDate($date) {
     // TODO: Use DateTime::createFromFormat() to validate
     // Format: 'Y-m-d'
+    $d = DateTime::createFromFormat('Y-m-d', $date);
     // Check that the created date matches the input string
     // Return true if valid, false otherwise
+    return $d && $d->format('Y-m-d') === $date;
+    
 }
 
 
@@ -790,12 +824,16 @@ function validateDate($date) {
  */
 function sanitizeInput($data) {
     // TODO: Trim whitespace
+    $data = trim($data);
     
     // TODO: Strip HTML tags using strip_tags()
+    $data = strip_tags($data);
     
     // TODO: Convert special characters using htmlspecialchars()
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     
     // TODO: Return sanitized data
+    return $data;
 }
 
 
@@ -810,6 +848,7 @@ function isValidSortField($field, $allowedFields) {
     // TODO: Check if $field exists in $allowedFields array
     // Use in_array()
     // Return true if valid, false otherwise
+    return in_array($field, $allowedFields);
 }
 
 ?>

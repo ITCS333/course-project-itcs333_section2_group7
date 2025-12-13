@@ -1,45 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web development Course Homepage</title>
-    <link rel="stylesheet" href="src/common/styles.css">
-  </head>
-
-  <body class="index-page">
-    <header class="index-header">
-      <h1>Welcome to the Web Development Course</h1>
-    </header>
-
-    <main class="index-main">
-      <nav class="index-nav">
-        <h2>Site Navigation</h2>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Development Course Homepage</title>
+  <link rel="stylesheet" href="src/common/styles.css">
+</head>
+<body class="index-page">
+  <header class="index-header">
+    <h1>Welcome to the Web Development Course</h1>
+  </header>
+  <main class="index-main">
+    <nav class="index-nav">
+      <h2>Site Navigation</h2>
+      <!-- Section 1: General Links -->
+      <section class="index-section general-links">
+        <h3>General</h3>
         <ul class="index-nav-list">
-          <!-- Section: General -->
-          <section class="index-section general-links">
-            <li><a href="src/auth/login.html">Login</a></li>
-          </section>
-
-          <!-- Section: Admin Pages -->
-          <section class="index-section admin-links">
-            <li><a href="src/admin/manage_users.html">Admin Portal (Manage Students)</a></li>
-            <li><a href="src/resources/admin.html">Admin: Manage Resources</a></li>
-            <li><a href="src/weekly/admin.html">Admin: Manage Weekly Breakdown</a></li>
-            <li><a href="src/assignments/admin.html">Admin: Manage Assignments</a></li>
-          </section>
-
-          <!-- Section: Student Pages -->
-          <section class="index-section student-links">
-            <li><a href="src/resources/list.html">View Course Resources</a></li>
-            <li><a href="src/weekly/list.html">View Weekly Breakdown</a></li>
-            <li><a href="src/assignments/list.html">View Assignments</a></li>
-            <li><a href="src/discussion/baord.html">General Discussion Board</a></li>
-          </section>
+          <li><a href="src/auth/login.html">Login</a></li>
         </ul>
-      </nav>
-    </main>
-  </body>
-</html>
+      </section>
+      <!-- Section 2: Admin Links -->
+      <section class="index-section admin-links">
+        <h3>Admin Area</h3>
+        <ul class="index-nav-list">
+          <li><a href="src/admin/manage_users.html">Admin Portal (Manage Students)</a></li>
+          <li><a href="src/resources/admin.html">Admin: Manage Resources</a></li>
+          <li><a href="src/weekly/admin.html">Admin: Manage Weekly Breakdown</a></li>
+          <li><a href="src/assignments/admin.html">Admin: Manage Assignments</a></li>
+        </ul>
+      </section>
+      <!-- Section 3: Student Links -->
+      <section class="index-section student-links">
+        <h3>Student Area</h3>
+        <ul class="index-nav-list">
+          <li><a href="src/resources/list.html">View Course Resources</a></li>
+          <li><a href="src/weekly/list.html">View Weekly Breakdown</a></li>
+          <li><a href="src/assignments/list.html">View Assignments</a></li>
+          <li><a href="src/discussion/baord.html">General Discussion Board</a></li>
+        </ul>
+      </section>
+      </nav></main></body></html>
