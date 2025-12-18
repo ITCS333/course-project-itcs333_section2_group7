@@ -243,27 +243,44 @@ function changePassword($db, $data) {
         sendResponse(['success'=>false,'message'=>'Failed to change password'],500);
     }
 }
-
 try {
     if ($method === 'GET') {
-        $studIdParam ? getStudentById($db, $studIdParam)
-                     : getStudents($db, $search, $sort, $order);
+        $studIdParam
+            ? getStudentById($db, $studIdParam)
+            : getStudents($db, $search, $sort, $order);
+
     } elseif ($method === 'POST') {
         $action === 'change_password'
             ? changePassword($db, $inputData)
             : createStudent($db, $inputData);
+
     } elseif ($method === 'PUT') {
         updateStudent($db, $inputData);
+
     } elseif ($method === 'DELETE') {
         deleteStudent($db, $studIdParam ?? $inputData['student_id'] ?? null);
+
     } else {
         sendResponse(['success'=>false,'message'=>'Method Not Allowed'],405);
     }
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error'
+    ]);
+    exit();
+
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success'=>false,'error'=>'Server error']);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Server error'
+    ]);
     exit();
 }
+
 
 function sendResponse($data, $statusCode = 200) {
     http_response_code($statusCode);
