@@ -1,4 +1,4 @@
-// --- Login Functionality --- //
+// --- Login Functionality ---
 const loginForm = document.getElementById("login-form");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -22,7 +22,6 @@ function isValidPassword(password) {
 
 async function handleLogin(event) {
   event.preventDefault();
-
   if (!emailInput || !passwordInput) return;
 
   const email = emailInput.value.trim();
@@ -62,12 +61,13 @@ async function handleLogin(event) {
     } else {
       displayMessage(result.message || "Login failed.", "error");
     }
-  } catch (error) {
+  } catch {
     displayMessage("Network error. Please try again.", "error");
   }
 }
 
-if (loginForm) {
+function setupLoginForm() {
+  if (!loginForm) return;
   loginForm.addEventListener("submit", handleLogin);
 }
 
@@ -263,8 +263,13 @@ async function loadStudentsAndInitialize() {
   tableHeaders.forEach(th => th.addEventListener("click", handleSort));
 }
 
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", loadStudentsAndInitialize);
+  document.addEventListener("DOMContentLoaded", () => {
+    setupLoginForm();
+    loadStudentsAndInitialize();
+  });
 } else {
+  setupLoginForm();
   loadStudentsAndInitialize();
 }
