@@ -1,4 +1,8 @@
 <?php
+<?php
+session_start();
+
+// Other existing code goes here...
 /**
  * Assignment Management API
  * 
@@ -317,7 +321,7 @@ function updateAssignment($db, $data) {
     $checkStmt = $db->prepare("SELECT id FROM assignments WHERE id = :id");
     $checkStmt->bindParam(':id', $assignmentId, PDO::PARAM_INT);
     $checkStmt->execute();
-    if ($checkStmt->fetch()  {
+    if ($checkStmt->fetch())  {
         sendResponse(['error' => 'Assignment not found'], 404);
         return;
     }
