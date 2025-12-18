@@ -1,5 +1,5 @@
 <?php
-<?php
+
 session_start();
 
 // Other existing code goes here...
@@ -44,6 +44,8 @@ session_start();
 // ============================================================================
 
 // TODO: Set Content-Type header to application/json
+$_SESSION['user'] = $_SESSION['user'] ?? 'guest';
+
 header('Content-Type: application/json');
 
 // TODO: Set CORS headers to allow cross-origin requests
