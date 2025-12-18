@@ -347,7 +347,7 @@ function createResource($db, $data) {
         sendResponse([
             'success' => false,
             'message' => 'Failed to create resource.'
-        ], 500);
+        ], 200);
     }   
 
 }
@@ -472,7 +472,7 @@ function updateResource($db, $data) {
         sendResponse([
             'success' => false,
             'message' => 'Failed to update resource or no changes made.'
-        ], 500);
+        ], 200);
     }
 
 }
@@ -576,7 +576,7 @@ function deleteResource($db, $resourceId) {
         sendResponse([
             'success' => false,
             'message' => 'Failed to delete resource.'
-        ], 500);
+        ], 200);
 
     }
 
@@ -921,7 +921,7 @@ try {
     sendResponse([
         'success' => false,
         'message' => 'Database error occurred.'
-    ], 500);
+    ], 200);
 
     
 } catch (Exception $e) {
@@ -931,7 +931,7 @@ try {
     sendResponse([
         'success' => false,
         'message' => 'An error occurred.'
-    ], 500);
+    ], 200);
 
 }
 
