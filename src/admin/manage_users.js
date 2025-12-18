@@ -70,6 +70,7 @@ function createStudentRow(student) {
  * 3. For each student, call `createStudentRow` and append the returned <tr> to `studentTableBody`.
  */
 function renderTable(studentArray) {
+  if (!studentTableBody) return;
   studentTableBody.innerHTML = "";
   for (let i = 0; i < studentArray.length; i++) {
     const row = createStudentRow(studentArray[i]);
@@ -265,6 +266,9 @@ function handleSort(event) {
  * - "input" on `searchInput` -> `handleSearch`
  * - "click" on each header in `tableHeaders` -> `handleSort`
  */
+function safeAddListener(el, event, handler) {
+  if (el) el.addEventListener(event, handler);
+}
 async function loadStudentsAndInitialize() {
   try {
     const response = await fetch("api/students.json");
